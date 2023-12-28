@@ -7,4 +7,4 @@
 (int , int , int , tuple) solve(int n , int m, tuple maze) method_id {
     tuple t = null();
     return (-1 , 0 , 0 , t);
-}
+} 
