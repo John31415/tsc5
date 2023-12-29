@@ -92,7 +92,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t1~tpush(1);
                     }
                 }
-                edges = cons(t , edges);
+                edges = cons(t1 , edges);
             }
             if(j > 0){
                 tuple t = empty_tuple();
