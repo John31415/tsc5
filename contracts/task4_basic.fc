@@ -16,8 +16,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int e2 = 0;
 
     ;; ARISTAS
-    tuple nueva = null();
-    tuple edges = nueva;
+    
+    tuple edges = null();
     int i = 0;
     repeat(n){
         int j = 0;
@@ -30,8 +30,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 e1 = i;
                 e2 = j;
             }
-            tuple t = empty_tuple();
             if((i > 0) & (j > 0)){
+                tuple t = empty_tuple();
                 t.tpush(i * m + j);
                 t.tpush((i - 1) * m + (j - 1));
                 if(maze.at(i - 1).at(j - 1) == 88){
@@ -45,10 +45,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
+                t~cons(edges);
             }
-            t~cons(edges);
-            tuple t = empty_tuple();
             if(i > 0){
+                tuple t = empty_tuple();
                 t.tpush(i * m + j);
                 t.tpush((i - 1) * m + j);
                 if(maze.at(i - 1).at(j) == 88){
@@ -62,10 +62,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
+                t~cons(edges);
             }
-            t~cons(edges);
-            tuple t = empty_tuple();
             if(j > 0){
+                tuple t = empty_tuple();
                 t.tpush(i * m + j);
                 t.tpush(i * m + (j - 1));
                 if(maze.at(i).at(j - 1) == 88){
@@ -79,10 +79,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
+                t~cons(edges);
             }
-            t~cons(edges);
-            tuple t = empty_tuple();
             if((i > 0) & (j < m - 1)){
+                tuple t = empty_tuple();
                 t.tpush(i * m + j);
                 t.tpush((i - 1) * m + (j + 1));
                 if(maze.at(i - 1).at(j + 1) == 88){
@@ -96,8 +96,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
+                t~cons(edges);
             }
-            t~cons(edges);
             j += 1;
         }
         i += 1;
