@@ -120,12 +120,14 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             it2 += 1;
         }
         SOLVE.tpush(SOLVE_AUX);
-        it1 += 1; 
+        it1 += 1;
     }
 
-    tuple retorno = null();
-    return (-1 , 0 , 0 , retorno);
- 
+    if(maze.at(e1).at(e2) == 69){
+        tuple retorno = null();
+        return (-1 , 0 , 0 , retorno);
+    }
+
     repeat(n * m - 1){
         tuple edges_aux = null();
         while(~ edges.null?()){
