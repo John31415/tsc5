@@ -46,21 +46,21 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     }
                 }
                 edges = cons(t , edges);
-                tuple t = empty_tuple();
-                t~tpush((i - 1) * m + (j - 1));
-                t~tpush(i * m + j);
+                tuple t1 = empty_tuple();
+                t1~tpush((i - 1) * m + (j - 1));
+                t1~tpush(i * m + j);
                 if(maze.at(i).at(j) == 88){
-                    t~tpush(1000001);
+                    t1~tpush(1000001);
                 }
                 else {
                     if(maze.at(i).at(j) == 63){
-                        t~tpush(1001);
+                        t1~tpush(1001);
                     }
                     else {
-                        t~tpush(1);
+                        t1~tpush(1);
                     }
                 }
-                edges = cons(t , edges);
+                edges = cons(t1 , edges);
             }
             if(i > 0){
                 tuple t = empty_tuple();
@@ -78,18 +78,18 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     }
                 }
                 edges = cons(t , edges);
-                tuple t = empty_tuple();
-                t~tpush((i - 1) * m + j);
-                t~tpush(i * m + j);
+                tuple t1 = empty_tuple();
+                t1~tpush((i - 1) * m + j);
+                t1~tpush(i * m + j);
                 if(maze.at(i).at(j) == 88){
-                    t~tpush(1000001);
+                    t1~tpush(1000001);
                 }
                 else {
                     if(maze.at(i).at(j) == 63){
-                        t~tpush(1001);
+                        t1~tpush(1001);
                     }
                     else {
-                        t~tpush(1);
+                        t1~tpush(1);
                     }
                 }
                 edges = cons(t , edges);
@@ -110,21 +110,21 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     }
                 }
                 edges = cons(t , edges);
-                tuple t = empty_tuple();
-                t~tpush(i * m + (j - 1));
-                t~tpush(i * m + j);
+                tuple t1 = empty_tuple();
+                t1~tpush(i * m + (j - 1));
+                t1~tpush(i * m + j);
                 if(maze.at(i).at(j) == 88){
-                    t~tpush(1000001);
+                    t1~tpush(1000001);
                 }
                 else {
                     if(maze.at(i).at(j) == 63){
-                        t~tpush(1001);
+                        t1~tpush(1001);
                     }
                     else {
-                        t~tpush(1);
+                        t1~tpush(1);
                     }
                 }
-                edges = cons(t , edges);
+                edges = cons(t1 , edges);
             }
             if((i > 0) & (j < m - 1)){
                 tuple t = empty_tuple();
@@ -142,21 +142,21 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     }
                 }
                 edges = cons(t , edges);
-                tuple t = empty_tuple();
-                t~tpush((i - 1) * m + (j + 1));
-                t~tpush(i * m + j);
+                tuple t1 = empty_tuple();
+                t1~tpush((i - 1) * m + (j + 1));
+                t1~tpush(i * m + j);
                 if(maze.at(i).at(j) == 88){
-                    t~tpush(1000001);
+                    t1~tpush(1000001);
                 }
                 else {
                     if(maze.at(i).at(j) == 63){
-                        t~tpush(1001);
+                        t1~tpush(1001);
                     }
                     else {
-                        t~tpush(1);
+                        t1~tpush(1);
                     }
                 }
-                edges = cons(t , edges);
+                edges = cons(t1 , edges);
             }
             j += 1;
         }
@@ -214,7 +214,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     int a = e1;
     int b = e2;
-    while((a != s1) | (b != s2)){
+    while(~ ((a == s1) & (b == s2))){
         tuple t_aux = empty_tuple();
         t_aux = maze.at(a);
         t_aux = t_aux.set_index_var(33,b);
@@ -287,6 +287,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     maze = maze.set_index_var(t_aux,a);
 
     ;; RETURN 
+    int val1 = SOLVE.at(e1).at(e2) / 1000;
+    int val2 = SOLVE.at(e1).at(e2) % 1000;
  
-    return (-1 , SOLVE.at(e1).at(e2) / 1000 , SOLVE.at(e1).at(e2) % 1000 , maze);
+    return (-1 , val1 , val2 , maze);
 }  
