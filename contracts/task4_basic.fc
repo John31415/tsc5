@@ -287,6 +287,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     maze = maze.set_index_var(t_aux,a);
 
     ;; RETURN 
-
+ 
     return (-1 , SOLVE.at(e1).at(e2) / 1000 , SOLVE.at(e1).at(e2) % 1000 , maze);
-} 
+}  
