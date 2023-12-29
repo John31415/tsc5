@@ -45,7 +45,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
-                t~cons(edges);
+                edges = cons(t , edges);
             }
             if(i > 0){
                 tuple t = empty_tuple();
@@ -62,7 +62,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
-                t~cons(edges);
+                edges = cons(t , edges);
             }
             if(j > 0){
                 tuple t = empty_tuple();
@@ -79,7 +79,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
-                t~cons(edges);
+                edges = cons(t , edges);
             }
             if((i > 0) & (j < m - 1)){
                 tuple t = empty_tuple();
@@ -96,7 +96,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         t.tpush(1);
                     }
                 }
-                t~cons(edges);
+                edges = cons(t , edges);
             }
             j += 1;
         }
