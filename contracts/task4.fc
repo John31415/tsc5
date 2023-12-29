@@ -184,7 +184,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         it1 += 1;
     }
 
-    repeat(n * m - 1){
+    repeat(n + m){
         tuple edges_aux = null();
         while(~ edges.null?()){
             (tuple ahora , edges) = uncons(edges);
@@ -287,10 +287,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int val0 = SOLVE.at(e1).at(e2) / 100000000;
     int val1 = (SOLVE.at(e1).at(e2) % 100000000) / 10000;
     int val2 = SOLVE.at(e1).at(e2) % 10000;
-
-    if((val0 == 0) & (val1 == 0) & (val2 == 1)){
-        return (0 , 0 , 1 , null());
-    }
 
     return (val0 , val1 , val2 , maze);
 }  
