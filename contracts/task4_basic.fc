@@ -114,12 +114,12 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         tuple edges_aux = null();
         while(~ edges.null?()){
             (tuple ahora , edges) = uncons(edges);
-            SOLVE = SOLVE.set_index_var(min(SOLVE.at(ahora.at(0))+ahora.at(2),SOLVE.at(ahora.at(1))),ahora.at(1));
-            ahora~cons(edges_aux);
+            SOLVE = SOLVE.set_index_var(min(SOLVE.at(ahora.at(0)) + ahora.at(2) , SOLVE.at(ahora.at(1))) , ahora.at(1));
+            edges_aux = cons(ahora , edges_aux);
         }
         while(~ edges_aux.null?()){
             (tuple ahora , edges_aux) = uncons(edges_aux);
-            ahora~cons(edges);
+            edges = cons(ahora , edges);
         }
     }
     if(SOLVE.at(e1 * m + e2) >= 1000000){
