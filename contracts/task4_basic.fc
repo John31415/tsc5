@@ -125,7 +125,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     tuple retorno = null();
     return (-1 , 0 , 0 , retorno);
-
+ 
     repeat(n * m - 1){
         tuple edges_aux = null();
         while(~ edges.null?()){
