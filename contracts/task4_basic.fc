@@ -16,8 +16,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int e2 = 0;
 
     ;; ARISTAS
-    
-    tuple edges = null();
+    tuple nueva = null();
+    tuple edges = nueva;
     int i = 0;
     repeat(n){
         int j = 0;
