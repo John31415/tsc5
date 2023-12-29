@@ -123,7 +123,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         it1 += 1;
     }
 
-    if(maze.at(e1).at(e2) == 69){
+    if(SOLVE.at(e1).at(e2) == 1000000000000){
         tuple retorno = null();
         return (-1 , 0 , 0 , retorno);
     }
