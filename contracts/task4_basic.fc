@@ -281,7 +281,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         a = x;
         b = y;
     }
-    tuple t_aux = empty_tuple();
+    tuple t_aux = empty_tuple(); 
     t_aux = maze.at(a);
     t_aux = t_aux.set_index_var(33,b);
     maze = maze.set_index_var(t_aux,a);
