@@ -214,7 +214,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     while(~ ((a == s1) & (b == s2))){
         int x = 1000000000000000;
         int y = 1000000000000000;
-        int peso = 1000000000000000;
+        int peso = SOLVE.at(a).at(b);
         if((a > 0)){
             if(b < m - 1){
                 if(SOLVE.at(a - 1).at(b + 1) < peso){
