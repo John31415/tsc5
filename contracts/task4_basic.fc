@@ -102,10 +102,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         }
         i += 1;
     }
-
-    if(SOLVE.at(e1).at(e2) >= 1000000){
-        return (-1 , 0 , 0 , null());
-    }
     
     ;;BELLMAN-FORD
 
@@ -126,6 +122,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         SOLVE.tpush(SOLVE_AUX);
         it1 += 1;
     }
+
+    if(SOLVE.at(e1).at(e2) >= 1000000){
+        return (-1 , 0 , 0 , null());
+    }
+
     repeat(n * m - 1){
         tuple edges_aux = null();
         while(~ edges.null?()){
