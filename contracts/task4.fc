@@ -9,7 +9,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 }
 
 (int , int , int , tuple) solve(int n , int m, tuple maze) method_id {
-    return (0 , 0 , 0 , null());
+    
     int s1 = 0;
     int s2 = 0;
     int e1 = 0;
@@ -284,5 +284,13 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     maze = maze.set_index_var(t_aux,e1);
 
     ;; RETURN 
-    return (SOLVE.at(e1).at(e2) / 100000000 , (SOLVE.at(e1).at(e2) % 100000000) / 10000 , SOLVE.at(e1).at(e2) % 10000 , maze);
+    int val0 = SOLVE.at(e1).at(e2) / 100000000;
+    int val1 = (SOLVE.at(e1).at(e2) % 100000000) / 10000;
+    int val2 = SOLVE.at(e1).at(e2) % 10000;
+
+    if((val0 == 0) & (val1 == 0) & (val2 == 1)){
+        return (0 , 0 , 1 , null());
+    }
+
+    return (val0 , val1 , val2 , maze);
 }  
