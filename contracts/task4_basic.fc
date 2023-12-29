@@ -145,6 +145,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             edges = cons(ahora , edges);
         }
     }
+
     if(SOLVE.at(e1).at(e2) >= 1000000){
         return (-1 , 0 , 0 , null());
     }
@@ -227,5 +228,5 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     ;; RETURN 
 
-    return (-1 , SOLVE.at(a).at(b) / 1000 , SOLVE.at(a).at(b) % 1000 , maze);
+    return (-1 , SOLVE.at(e1).at(e2) / 1000 , SOLVE.at(e1).at(e2) % 1000 , maze);
 } 
