@@ -37,11 +37,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 if(maze.at(i - 1).at(j - 1) == 88){
                     t.tpush(1000001);
                 }
-                else{
+                else {
                     if(maze.at(i - 1).at(j - 1) == 63){
                         t.tpush(1001);
                     }
-                    else{
+                    else {
                         t.tpush(1);
                     }
                 }
@@ -54,11 +54,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 if(maze.at(i - 1).at(j) == 88){
                     t.tpush(1000001);
                 }
-                else{
+                else {
                     if(maze.at(i - 1).at(j) == 63){
                         t.tpush(1001);
                     }
-                    else{
+                    else {
                         t.tpush(1);
                     }
                 }
@@ -71,11 +71,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 if(maze.at(i).at(j - 1) == 88){
                     t.tpush(1000001);
                 }
-                else{
+                else {
                     if(maze.at(i).at(j - 1) == 63){
                         t.tpush(1001);
                     }
-                    else{
+                    else {
                         t.tpush(1);
                     }
                 }
@@ -88,11 +88,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 if(maze.at(i - 1).at(j + 1) == 88){
                     t.tpush(1000001);
                 }
-                else{
+                else {
                     if(maze.at(i - 1).at(j + 1) == 63){
                         t.tpush(1001);
                     }
-                    else{
+                    else {
                         t.tpush(1);
                     }
                 }
@@ -112,12 +112,12 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     SOLVE = SOLVE.set_index_var(0,s1 * m + s2);
     repeat(n * m - 1){
         tuple edges_aux = null();
-        while(~edges.null?()){
+        while(~ edges.null?()){
             (tuple ahora , edges) = uncons(edges);
             SOLVE = SOLVE.set_index_var(min(SOLVE.at(ahora.at(0))+ahora.at(2),SOLVE.at(ahora.at(1))),ahora.at(1));
             ahora~cons(edges_aux);
         }
-        while(~edges_aux.null?()){
+        while(~ edges_aux.null?()){
             (tuple ahora , edges_aux) = uncons(edges_aux);
             ahora~cons(edges);
         }
