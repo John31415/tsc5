@@ -201,6 +201,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             }
             edges_aux = cons(ahora , edges_aux);
         }
+        edges = null();
         while(~ edges_aux.null?()){
             (tuple ahora , edges_aux) = uncons(edges_aux);
             edges = cons(ahora , edges);
@@ -212,8 +213,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int a = e1;
     int b = e2;
     while(~ ((a == s1) & (b == s2))){
-        int x = 1000000000000000;
-        int y = 1000000000000000;
+        int x = a;
+        int y = b;
         int peso = SOLVE.at(a).at(b);
         if((a > 0)){
             if(b < m - 1){
