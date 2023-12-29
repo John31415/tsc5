@@ -282,6 +282,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         }
     }
 
+    if(SOLVE.at(e1).at(e2) >= 1000000000000000){
+        return (0 , 0 , 0 , null());
+    }
+
     ;; RETURN 
     int val0 = SOLVE.at(e1).at(e2) / 100000000;
     int val1 = (SOLVE.at(e1).at(e2) % 100000000) / 10000;
