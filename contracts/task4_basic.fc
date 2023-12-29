@@ -1,5 +1,294 @@
 #include "imports/stdlib.fc";
 
+forall X -> tuple set_index_var(tuple t, X value, int position) asm "SETINDEXVAR";
+forall X -> tuple cons(X head, tuple tail) asm "CONS";
+forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
+
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 
 }
+
+(int , int , int , tuple) solve(int n , int m, tuple maze) method_id {
+    
+    int s1 = 0;
+    int s2 = 0;
+    int e1 = 0;
+    int e2 = 0;
+
+    ;; ARISTAS
+    
+    tuple edges = null();
+    int i = 0;
+    repeat(n){
+        int j = 0;
+        repeat(m){
+            if(maze.at(i).at(j) == 83){
+                s1 = i;
+                s2 = j;
+            }
+            if(maze.at(i).at(j) == 69){
+                e1 = i;
+                e2 = j;
+            }
+            if((i > 0) & (j > 0)){
+                tuple t = empty_tuple();
+                t~tpush(i * m + j);
+                t~tpush((i - 1) * m + (j - 1));
+                if(maze.at(i - 1).at(j - 1) == 88){
+                    t~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i - 1).at(j - 1) == 63){
+                        t~tpush(1001);
+                    }
+                    else {
+                        t~tpush(1);
+                    }
+                }
+                edges = cons(t , edges);
+                tuple t1 = empty_tuple();
+                t1~tpush((i - 1) * m + (j - 1));
+                t1~tpush(i * m + j);
+                if(maze.at(i).at(j) == 88){
+                    t1~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i).at(j) == 63){
+                        t1~tpush(1001);
+                    }
+                    else {
+                        t1~tpush(1);
+                    }
+                }
+                edges = cons(t1 , edges);
+            }
+            if(i > 0){
+                tuple t = empty_tuple();
+                t~tpush(i * m + j);
+                t~tpush((i - 1) * m + j);
+                if(maze.at(i - 1).at(j) == 88){
+                    t~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i - 1).at(j) == 63){
+                        t~tpush(1001);
+                    }
+                    else {
+                        t~tpush(1);
+                    }
+                }
+                edges = cons(t , edges);
+                tuple t1 = empty_tuple();
+                t1~tpush((i - 1) * m + j);
+                t1~tpush(i * m + j);
+                if(maze.at(i).at(j) == 88){
+                    t1~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i).at(j) == 63){
+                        t1~tpush(1001);
+                    }
+                    else {
+                        t1~tpush(1);
+                    }
+                }
+                edges = cons(t1 , edges);
+            }
+            if(j > 0){
+                tuple t = empty_tuple();
+                t~tpush(i * m + j);
+                t~tpush(i * m + (j - 1));
+                if(maze.at(i).at(j - 1) == 88){
+                    t~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i).at(j - 1) == 63){
+                        t~tpush(1001);
+                    }
+                    else {
+                        t~tpush(1);
+                    }
+                }
+                edges = cons(t , edges);
+                tuple t1 = empty_tuple();
+                t1~tpush(i * m + (j - 1));
+                t1~tpush(i * m + j);
+                if(maze.at(i).at(j) == 88){
+                    t1~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i).at(j) == 63){
+                        t1~tpush(1001);
+                    }
+                    else {
+                        t1~tpush(1);
+                    }
+                }
+                edges = cons(t1 , edges);
+            }
+            if((i > 0) & (j < m - 1)){
+                tuple t = empty_tuple();
+                t~tpush(i * m + j);
+                t~tpush((i - 1) * m + (j + 1));
+                if(maze.at(i - 1).at(j + 1) == 88){
+                    t~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i - 1).at(j + 1) == 63){
+                        t~tpush(1001);
+                    }
+                    else {
+                        t~tpush(1);
+                    }
+                }
+                edges = cons(t , edges);
+                tuple t1 = empty_tuple();
+                t1~tpush((i - 1) * m + (j + 1));
+                t1~tpush(i * m + j);
+                if(maze.at(i).at(j) == 88){
+                    t1~tpush(1000001);
+                }
+                else {
+                    if(maze.at(i).at(j) == 63){
+                        t1~tpush(1001);
+                    }
+                    else {
+                        t1~tpush(1);
+                    }
+                }
+                edges = cons(t1 , edges);
+            }
+            j += 1;
+        }
+        i += 1;
+    }
+    
+    ;;BELLMAN-FORD
+
+    tuple SOLVE = empty_tuple();
+    int it1 = 0;
+    repeat(n){
+        tuple SOLVE_AUX = empty_tuple();
+        int it2 = 0;
+        repeat(m){
+            if((it1 == s1) & (it2 == s2)){
+                SOLVE_AUX~tpush(0);
+            }
+            else {
+                SOLVE_AUX~tpush(1000000000000);
+            }
+            it2 += 1;
+        }
+        SOLVE~tpush(SOLVE_AUX);
+        it1 += 1;
+    }
+
+    repeat(n * m - 1){
+        tuple edges_aux = null();
+        while(~ edges.null?()){
+            (tuple ahora , edges) = uncons(edges);
+            int x1 = ahora.at(0) / m;
+            int y1 = ahora.at(0) % m;
+            int x2 = ahora.at(1) / m;
+            int y2 = ahora.at(1) % m;
+            int peso = ahora.at(2);
+            if(SOLVE.at(x2).at(y2) > SOLVE.at(x1).at(y1) + peso){
+                tuple t_aux = empty_tuple();
+                t_aux = SOLVE.at(x2);
+                t_aux = t_aux.set_index_var(SOLVE.at(x1).at(y1) + peso,y2);
+                SOLVE = SOLVE.set_index_var(t_aux,x2);
+            }
+            edges_aux = cons(ahora , edges_aux);
+        }
+        while(~ edges_aux.null?()){
+            (tuple ahora , edges_aux) = uncons(edges_aux);
+            edges = cons(ahora , edges);
+        }
+    }
+
+    if(SOLVE.at(e1).at(e2) >= 1000000){
+        return (-1 , 0 , 0 , null());
+    }
+
+    ;; RECONSTRUCCION
+
+    int a = e1;
+    int b = e2;
+    while(~ ((a == s1) & (b == s2))){
+        tuple t_aux = empty_tuple();
+        t_aux = maze.at(a);
+        t_aux = t_aux.set_index_var(33,b);
+        maze = maze.set_index_var(t_aux,a);
+        int x = 10000000000000;
+        int y = 10000000000000;
+        int peso = 10000000000000;
+        if((a > 0) & (b > 0)){
+            if(SOLVE.at(a - 1).at(b - 1) < peso){
+                peso = SOLVE.at(a - 1).at(b - 1);
+                x = a - 1;
+                y = b - 1;
+            }
+        }
+        if((a > 0)){
+            if(SOLVE.at(a - 1).at(b) < peso){
+                peso = SOLVE.at(a - 1).at(b);
+                x = a - 1;
+                y = b;
+            }
+        }
+        if((a > 0) & (b < m - 1)){
+            if(SOLVE.at(a - 1).at(b + 1) < peso){
+                peso = SOLVE.at(a - 1).at(b + 1);
+                x = a - 1;
+                y = b + 1;
+            }
+        }
+        if((b > 0)){
+            if(SOLVE.at(a).at(b - 1) < peso){
+                peso = SOLVE.at(a).at(b - 1);
+                x = a;
+                y = b - 1;
+            }
+        }
+        if((b < m - 1)){
+            if(SOLVE.at(a).at(b + 1) < peso){
+                peso = SOLVE.at(a).at(b + 1);
+                x = a;
+                y = b + 1;
+            }
+        }
+        if((a < n - 1) & (b > 0)){
+            if(SOLVE.at(a + 1).at(b - 1) < peso){
+                peso = SOLVE.at(a + 1).at(b - 1);
+                x = a + 1;
+                y = b - 1;
+            }
+        }
+        if((a < n - 1)){
+            if(SOLVE.at(a + 1).at(b) < peso){
+                peso = SOLVE.at(a + 1).at(b);
+                x = a + 1;
+                y = b;
+            }
+        }
+        if((a < n - 1) & (b < m - 1)){
+            if(SOLVE.at(a + 1).at(b + 1) < peso){
+                peso = SOLVE.at(a + 1).at(b + 1);
+                x = a + 1;
+                y = b + 1;
+            }
+        }
+        a = x;
+        b = y;
+    }
+    tuple t_aux = empty_tuple(); 
+    t_aux = maze.at(e1);
+    t_aux = t_aux.set_index_var(69,e2);
+    maze = maze.set_index_var(t_aux,e1);
+
+    ;; RETURN 
+    int val1 = SOLVE.at(e1).at(e2) / 1000;
+    int val2 = SOLVE.at(e1).at(e2) % 1000;
+ 
+    return (-1 , val1 , val2 , maze);
+}  
