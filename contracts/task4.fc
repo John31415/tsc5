@@ -184,7 +184,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         it1 += 1;
     }
 
-    repeat(n + m){
+    repeat(n){
         tuple edges_aux = null();
         while(~ edges.null?()){
             (tuple ahora , edges) = uncons(edges);
