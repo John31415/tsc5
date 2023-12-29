@@ -124,7 +124,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     }
 
     if(SOLVE.at(e1).at(e2) >= 1000000){
-        return (-1 , 0 , 0 , null());
+        tuple retorno = null();
+        return (-1 , 0 , 0 , retorno);
     }
 
     repeat(n * m - 1){
