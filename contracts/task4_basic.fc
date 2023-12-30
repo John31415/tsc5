@@ -43,7 +43,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     ;; DIJKSTRA
 
-    int dist = -1;
     tuple cola = null();
     cola = cons(s1 * 100 + s2 , cola);
     while(~ cola.null?()){
@@ -51,14 +50,9 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         (int top , cola) = uncons(cola);
         while(~ cola.null?()){
             (int last , cola) = uncons(cola);
-            if(last > dist){
-                if(last < top){
-                    cola_aux = cons(top , cola_aux);
-                    top = last;
-                }
-                else {
-                    cola_aux = cons(last , cola_aux);
-                }
+            if(last < top){
+                cola_aux = cons(top , cola_aux);
+                top = last;
             }
             else {
                 cola_aux = cons(last , cola_aux);
@@ -68,7 +62,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             (int last , cola_aux) = uncons(cola_aux);
             cola = cons(last , cola);
         }
-        dist = top;
         int a = top % 10000 / 100;
         int b = top % 100;
         int it1 = -1;
