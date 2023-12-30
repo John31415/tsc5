@@ -28,12 +28,12 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 s1 = it1;
                 s2 = it2;
             }
+            else {
+                SOLVE_AUX~tpush(1000000000000000);
+            }
             if(maze.at(it1).at(it2) == 69){
                 e1 = it1;
                 e2 = it2;
-            }
-            else {
-                SOLVE_AUX~tpush(1000000000000000);
             }
             it2 += 1;
         }
@@ -43,29 +43,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     ;; DIJKSTRA
 
-    int dist = -1;
     tuple cola = null();
     cola = cons(s1 * 100 + s2 , cola);
     while(~ cola.null?()){
-        tuple cola_aux = null();
         (int top , cola) = uncons(cola);
-        while(~ cola.null?()){
-            (int last , cola) = uncons(cola);
-            if(last > dist){
-                if(last < top){
-                    cola_aux = cons(top , cola_aux);
-                    top = last;
-                }
-            }
-            else {
-                cola_aux = cons(last , cola_aux);
-            }
-        }
-        while(~ cola_aux.null?()){
-            (int last , cola_aux) = uncons(cola_aux);
-            cola = cons(last , cola);
-        }
-        dist = top;
         int a = top % 10000 / 100;
         int b = top % 100;
         int it1 = -1;
@@ -89,7 +70,23 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                             t_aux = t_aux.set_index_var(SOLVE.at(a).at(b) + peso,y);
                             SOLVE = SOLVE.set_index_var(t_aux,x);
                             int val = (SOLVE.at(x).at(y) * 10000) + (x * 100) + (y);
+                            tuple cola_aux = null();
+                            int band = 1;
+                            while((band == 1) & (~ cola.null?())){
+                                (int last , cola) = uncons(cola);
+                                if(last < val){
+                                    cola_aux = cons(last , cola_aux);
+                                }
+                                else {
+                                    cola = cons(last , cola);
+                                    band = 0;
+                                }
+                            }
                             cola = cons(val , cola);
+                            while(~ cola_aux.null?()){
+                                (int last , cola_aux) = uncons(cola_aux);
+                                cola = cons(last , cola);
+                            }
                         }
                     }
                 }
@@ -171,6 +168,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             t_aux = t_aux.set_index_var(33,b);
             maze = maze.set_index_var(t_aux,a);
         }
+    }
+
+    if(SOLVE.at(e1).at(e2) >= 1000000000000000){
+        return (0 , 0 , 0 , null());
     }
 
     ;; RETURN 
