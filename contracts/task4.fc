@@ -182,5 +182,5 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int val1 = (SOLVE.at(e1).at(e2) % 1000000) / 1000;
     int val2 = SOLVE.at(e1).at(e2) % 1000;
 
-    return (-1 , val1 , val2 , maze);
+    return (val0 , val1 , val2 , maze);
 }  
