@@ -56,6 +56,9 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     cola_aux = cons(top , cola_aux);
                     top = last;
                 }
+                else {
+                    cola_aux = cons(last , cola_aux);
+                }
             }
             else {
                 cola_aux = cons(last , cola_aux);
