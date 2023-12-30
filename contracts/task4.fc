@@ -14,157 +14,8 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int s2 = 0;
     int e1 = 0;
     int e2 = 0;
-
-    ;; ARISTAS
     
-    tuple edges = null();
-    int i = 0;
-    repeat(n){
-        int j = 0;
-        repeat(m){
-            int mij = maze.at(i).at(j); 
-            if(mij == 83){
-                s1 = i;
-                s2 = j;
-            }
-            if(mij == 69){
-                e1 = i;
-                e2 = j;
-            }
-            if(i > 0){
-                if(j < m - 1){
-                    tuple t = empty_tuple();
-                    t~tpush(i * m + j);
-                    t~tpush((i - 1) * m + (j + 1));
-                    if(maze.at(i - 1).at(j + 1) == 88){
-                        t~tpush(100000001);
-                    }
-                    else {
-                        if(maze.at(i - 1).at(j + 1) == 63){
-                            t~tpush(10001);
-                        }
-                        else {
-                            t~tpush(1);
-                        }
-                    }
-                    edges = cons(t , edges);
-                    tuple t1 = empty_tuple();
-                    t1~tpush((i - 1) * m + (j + 1));
-                    t1~tpush(i * m + j);
-                    if(mij == 88){
-                        t1~tpush(100000001);
-                    }
-                    else {
-                        if(mij == 63){
-                            t1~tpush(10001);
-                        }
-                        else {
-                            t1~tpush(1);
-                        }
-                    }
-                    edges = cons(t1 , edges);
-                }
-                if(j > 0){
-                    tuple t = empty_tuple();
-                    t~tpush(i * m + j);
-                    t~tpush((i - 1) * m + (j - 1));
-                    if(maze.at(i - 1).at(j - 1) == 88){
-                        t~tpush(100000001);
-                    }
-                    else {
-                        if(maze.at(i - 1).at(j - 1) == 63){
-                            t~tpush(10001);
-                        }
-                        else {
-                            t~tpush(1);
-                        }
-                    }
-                    edges = cons(t , edges);
-                    tuple t1 = empty_tuple();
-                    t1~tpush((i - 1) * m + (j - 1));
-                    t1~tpush(i * m + j);
-                    if(mij == 88){
-                        t1~tpush(100000001);
-                    }
-                    else {
-                        if(mij == 63){
-                            t1~tpush(10001);
-                        }
-                        else {
-                            t1~tpush(1);
-                        }
-                    }
-                    edges = cons(t1 , edges);
-                }
-                tuple t = empty_tuple();
-                t~tpush(i * m + j);
-                t~tpush((i - 1) * m + j);
-                if(maze.at(i - 1).at(j) == 88){
-                    t~tpush(100000001);
-                }
-                else {
-                    if(maze.at(i - 1).at(j) == 63){
-                        t~tpush(10001);
-                    }
-                    else {
-                        t~tpush(1);
-                    }
-                }
-                edges = cons(t , edges);
-                tuple t1 = empty_tuple();
-                t1~tpush((i - 1) * m + j);
-                t1~tpush(i * m + j);
-                if(mij == 88){
-                    t1~tpush(100000001);
-                }
-                else {
-                    if(mij == 63){
-                        t1~tpush(10001);
-                    }
-                    else {
-                        t1~tpush(1);
-                    }
-                }
-                edges = cons(t1 , edges);
-            }
-            if(j > 0){
-                tuple t = empty_tuple();
-                t~tpush(i * m + j);
-                t~tpush(i * m + (j - 1));
-                if(maze.at(i).at(j - 1) == 88){
-                    t~tpush(100000001);
-                }
-                else {
-                    if(maze.at(i).at(j - 1) == 63){
-                        t~tpush(10001);
-                    }
-                    else {
-                        t~tpush(1);
-                    }
-                }
-                edges = cons(t , edges);
-                tuple t1 = empty_tuple();
-                t1~tpush(i * m + (j - 1));
-                t1~tpush(i * m + j);
-                if(mij == 88){
-                    t1~tpush(100000001);
-                }
-                else {
-                    if(mij == 63){
-                        t1~tpush(10001);
-                    }
-                    else {
-                        t1~tpush(1);
-                    }
-                }
-                edges = cons(t1 , edges);
-            }
-            j += 1;
-        }
-        i += 1;
-    }
-    
-    ;;BELLMAN-FORD
+    ;;INICIALIZAR-SOLVE
 
     tuple SOLVE = empty_tuple();
     int it1 = 0;
@@ -172,8 +23,14 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         tuple SOLVE_AUX = empty_tuple();
         int it2 = 0;
         repeat(m){
-            if((it1 == s1) & (it2 == s2)){
+            if(maze.at(it1).at(it2) == 83){
                 SOLVE_AUX~tpush(0);
+                s1 = it1;
+                s2 = it2;
+            }
+            if(maze.at(it1).at(it2) == 69){
+                e1 = it1;
+                e2 = it2;
             }
             else {
                 SOLVE_AUX~tpush(1000000000000000);
@@ -184,27 +41,58 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         it1 += 1;
     }
 
-    repeat(n * m - 1){
-        tuple edges_aux = null();
-        while(~ edges.null?()){
-            (tuple ahora , edges) = uncons(edges);
-            int x1 = ahora.at(0) / m;
-            int y1 = ahora.at(0) % m;
-            int x2 = ahora.at(1) / m;
-            int y2 = ahora.at(1) % m;
-            int peso = ahora.at(2);
-            if(SOLVE.at(x2).at(y2) > SOLVE.at(x1).at(y1) + peso){
-                tuple t_aux = empty_tuple();
-                t_aux = SOLVE.at(x2);
-                t_aux = t_aux.set_index_var(SOLVE.at(x1).at(y1) + peso,y2);
-                SOLVE = SOLVE.set_index_var(t_aux,x2);
+    ;; DIJKSTRA
+
+    tuple cola = null();
+    cola = cons(s1 * 100 + s2 , cola);
+    while(~ cola.null?()){
+        (int top , cola) = uncons(cola);
+        int a = top % 10000 / 100;
+        int b = top % 100;
+        int it1 = -1;
+        repeat(3){
+            int it2 = -1;
+            repeat(3){
+                if((it1 != 0) & (it2 != 0)){
+                    int x = a + it1;
+                    int y = b + it2;
+                    if((0 <= x) & (x <= n - 1) & (0 <= y) & (y <= m - 1)){
+                        int peso = 1;
+                        if(maze.at(x).at(y) == 88){
+                            peso = 1000001;
+                        }
+                        if(maze.at(x).at(y) == 63){
+                            peso = 1001;
+                        }
+                        if(SOLVE.at(x).at(y) > SOLVE.at(a).at(b) + peso){
+                            tuple t_aux = empty_tuple();
+                            t_aux = SOLVE.at(x);
+                            t_aux = t_aux.set_index_var(SOLVE.at(a).at(b) + peso,y);
+                            SOLVE = SOLVE.set_index_var(t_aux,x);
+                        }
+                        int val = (SOLVE.at(x).at(y) * 10000) + (x * 100) + (y);
+                        tuple cola_aux = null();
+                        int band = 1;
+                        while((band == 1) & (~ cola.null?())){
+                            (int last , cola) = uncons(cola);
+                            if(last < val){
+                                cola_aux = cons(last , cola_aux);
+                            }
+                            else {
+                                cola = cons(last , cola);
+                                band = 0;
+                            }
+                        }
+                        cola = cons(val , cola);
+                        while(~ cola_aux.null?()){
+                            (int last , cola_aux) = uncons(cola_aux);
+                            cola = cons(last , cola);
+                        }
+                    }
+                }
+                it2 += 1;
             }
-            edges_aux = cons(ahora , edges_aux);
-        }
-        edges = null();
-        while(~ edges_aux.null?()){
-            (tuple ahora , edges_aux) = uncons(edges_aux);
-            edges = cons(ahora , edges);
+            it1 += 1;
         }
     }
 
@@ -287,9 +175,9 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     }
 
     ;; RETURN 
-    int val0 = SOLVE.at(e1).at(e2) / 100000000;
-    int val1 = (SOLVE.at(e1).at(e2) % 100000000) / 10000;
-    int val2 = SOLVE.at(e1).at(e2) % 10000;
+    int val0 = SOLVE.at(e1).at(e2) / 1000000;
+    int val1 = (SOLVE.at(e1).at(e2) % 1000000) / 1000;
+    int val2 = SOLVE.at(e1).at(e2) % 1000;
 
     return (val0 , val1 , val2 , maze);
 }  
