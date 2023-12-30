@@ -28,12 +28,12 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 s1 = it1;
                 s2 = it2;
             }
+            else {
+                SOLVE_AUX~tpush(1000000000000000);
+            }
             if(maze.at(it1).at(it2) == 69){
                 e1 = it1;
                 e2 = it2;
-            }
-            else {
-                SOLVE_AUX~tpush(1000000000000000);
             }
             it2 += 1;
         }
