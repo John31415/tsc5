@@ -110,24 +110,61 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         int x = a;
         int y = b;
         int peso = SOLVE.at(a).at(b);
-        int it1 = -1;
-        repeat(3){
-            int it2 = -1;
-            repeat(3){
-                if(~ ((it1 == 0) & (it2 == 0))){
-                    int a1 = a + it1;
-                    int b1 = b + it2;
-                    if((0 <= a1) & (a1 < n) & (0 <= b1) & (b1 < m)){
-                        if(SOLVE.at(a1).at(b1) < peso){
-                            peso = SOLVE.at(a1).at(b1);
-                            x = a1;
-                            y = b1;
-                        }
-                    }
+        if((a > 0)){
+            if(b < m - 1){
+                if(SOLVE.at(a - 1).at(b + 1) < peso){
+                    peso = SOLVE.at(a - 1).at(b + 1);
+                    x = a - 1;
+                    y = b + 1;
                 }
-                it2 += 1;
             }
-            it1 += 1;
+            if(b > 0){
+                if(SOLVE.at(a - 1).at(b - 1) < peso){
+                    peso = SOLVE.at(a - 1).at(b - 1);
+                    x = a - 1;
+                    y = b - 1;
+                }
+            }
+            if(SOLVE.at(a - 1).at(b) < peso){
+                peso = SOLVE.at(a - 1).at(b);
+                x = a - 1;
+                y = b;
+            }
+        }
+        if((b > 0)){
+            if(SOLVE.at(a).at(b - 1) < peso){
+                peso = SOLVE.at(a).at(b - 1);
+                x = a;
+                y = b - 1;
+            }
+        }
+        if((b < m - 1)){
+            if(SOLVE.at(a).at(b + 1) < peso){
+                peso = SOLVE.at(a).at(b + 1);
+                x = a;
+                y = b + 1;
+            }
+        }
+        if((a < n - 1)){
+            if(b < m - 1){
+                if(SOLVE.at(a + 1).at(b + 1) < peso){
+                    peso = SOLVE.at(a + 1).at(b + 1);
+                    x = a + 1;
+                    y = b + 1;
+                }
+            }
+            if(b > 0){
+                if(SOLVE.at(a + 1).at(b - 1) < peso){
+                    peso = SOLVE.at(a + 1).at(b - 1);
+                    x = a + 1;
+                    y = b - 1;
+                }
+            }
+            if(SOLVE.at(a + 1).at(b) < peso){
+                peso = SOLVE.at(a + 1).at(b);
+                x = a + 1;
+                y = b;
+            }
         }
         a = x;
         b = y;
