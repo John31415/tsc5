@@ -37,7 +37,13 @@ int get_execution_time() method_id {
     }
     else {
         slice data = get_data().begin_parse();
-        var (_, execution_time) = (data~load_uint(256), data~load_uint(32));
-        throw_if(124, execution_time > now());
+        var (_, execution_time, receiver) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr());
+        if(execution_time > now()){
+            throw(124);
+        }
+        else {
+            cell msg = begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).end_cell();
+            send_raw_message(msg, 128);
+        }
     }
 }
