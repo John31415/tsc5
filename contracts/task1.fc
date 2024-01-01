@@ -22,7 +22,7 @@ int get_execution_time() method_id {
     slice ref_s = ref_cell.begin_parse();
     slice hash_s = ref_s;
     slice data = get_data().begin_parse();
-    var (public_key, execution_time, receiver, seqno) = (data~loagitd_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
+    var (public_key, execution_time, receiver, seqno) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
     var (locked_for, new_seqno) = (ref_s~load_uint(32), ref_s~load_uint(32));    
     throw_if(119,new_seqno != (seqno + 1));
     throw_unless(120, check_signature(slice_hash(hash_s), signature, public_key));
