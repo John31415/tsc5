@@ -40,7 +40,7 @@ int get_execution_time() method_id {
     }
     else {
         var (_, execution_time, receiver) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr());
-        throwif(124, execution_time > now());
+        throw_if(124, execution_time > now());
         cell msg = begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).end_cell();
         send_raw_message(msg, 128);
     }
