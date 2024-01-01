@@ -9,7 +9,7 @@
     var query_id = in_msg~load_uint(64);
     var signature = in_msg~load_bits(512);
     cell ref_cell = in_msg~load_ref();
-    slice ref_s = ref_cell().begin_parse();
+    slice ref_s = ref_cell.begin_parse();
     slice data = get_data().begin_parse();
     var (public_key, execution_time, receiver, seqno) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
     data.end_parse();
