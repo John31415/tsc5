@@ -1,5 +1,8 @@
 #include "imports/stdlib.fc";
 
+() set_data(cell c) impure asm "c4 POP";
+int now() asm "NOW";
+
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 
 }
@@ -18,12 +21,12 @@ int get_execution_time() method_id {
 
 () recv_external(slice in_msg) impure {
     var op = in_msg~load_uint(32);
+    slice data = get_data().begin_parse();
     if(op == 0x9df10277){
         var (query_id, signature) = (in_msg~load_uint(64), in_msg~load_bits(512));
         cell ref_cell = in_msg~load_ref();
         slice ref_s = ref_cell.begin_parse();
         slice hash_s = ref_s;
-        slice data = get_data().begin_parse();
         var (public_key, execution_time, receiver, seqno) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
         var (locked_for, new_seqno) = (ref_s~load_uint(32), ref_s~load_uint(32));    
         throw_if(119,new_seqno != (seqno + 1));
@@ -36,13 +39,12 @@ int get_execution_time() method_id {
         set_data(begin_cell().store_uint(public_key, 256).store_uint(execution_time, 32).store_slice(receiver).store_uint(seqno, 32).end_cell());
     }
     else {
-        slice data = get_data().begin_parse();
         var (_, execution_time, receiver) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr());
         if(execution_time > now()){
             throw(124);
         }
         else {
-            cell msg = begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).end_cell();
+            cell msg = begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).store_uint(0, 32).end_cell();
             send_raw_message(msg, 128);
         }
     }
