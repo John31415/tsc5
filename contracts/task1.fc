@@ -25,7 +25,7 @@ int get_execution_time() method_id {
     if(op == 0x9df10277){
         var (query_id, signature) = (in_msg~load_uint(64), in_msg~load_bits(512));
         cell ref_cell = in_msg~load_ref();
-        cell hash_c = ref_c; 
+        cell hash_c = ref_cell; 
         slice ref_s = ref_cell.begin_parse();
         var (public_key, execution_time, receiver, seqno) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
         var (locked_for, new_seqno) = (ref_s~load_uint(32), ref_s~load_uint(32));    
