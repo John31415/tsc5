@@ -57,7 +57,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         repeat(3){
             int it2 = -1;
             repeat(3){
-                if(~ ((it1 == 0) & (it2 == 0))){
+                if(it1 | it2){
                     int x = a + it1;
                     int y = b + it2;
                     if((0 <= x) & (x < n) & (0 <= y) & (y < m)){
@@ -106,7 +106,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     int a = e1;
     int b = e2;
-    while(~ ((a == s1) & (b == s2))){
+    while((a == s1) | (b == s2)){
+        tuple t_aux = empty_tuple();
+        t_aux = maze.at(a); 
+        t_aux = t_aux.set_index_var(33,b);
+        maze = maze.set_index_var(t_aux,a); 
         int x = a;
         int y = b;
         int peso = SOLVE.at(a).at(b);
@@ -168,18 +172,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         }
         a = x;
         b = y;
-        if(~ ((a == s1) & (b == s2))){
-            tuple t_aux = empty_tuple();
-            t_aux = maze.at(a); 
-            t_aux = t_aux.set_index_var(33,b);
-            maze = maze.set_index_var(t_aux,a);
-        }
     }
+    tuple t_aux = empty_tuple();
+    t_aux = maze.at(e1); 
+    t_aux = t_aux.set_index_var(69,e2);
+    maze = maze.set_index_var(t_aux,e1);
 
-    ;; RETURN 
-    int val0 = SOLVE.at(e1).at(e2) / 1000000;
-    int val1 = (SOLVE.at(e1).at(e2) % 1000000) / 1000;
-    int val2 = SOLVE.at(e1).at(e2) % 1000;
-
-    return (val0 , val1 , val2 , maze);
+    return (SOLVE.at(e1).at(e2) / 1000000 , (SOLVE.at(e1).at(e2) % 1000000) / 1000 , SOLVE.at(e1).at(e2) % 1000 , maze);
 }  
