@@ -119,7 +119,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             }
             if(b > 0){
                 if(SOLVE.at(a - 1).at(b - 1) < peso){
-                    peso = SOLVE.at(a - 1).at(b - ;
+                    peso = SOLVE.at(a - 1).at(b - 1);
                     x = a - 1;
                     y = b - 1;
                 }
