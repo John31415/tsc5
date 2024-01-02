@@ -1,48 +1,158 @@
 #include "imports/stdlib.fc";
 
-() set_data(cell c) impure asm "c4 POP";
-int now() asm "NOW";
+forall X -> tuple set_index_var(tuple t, X value, int position) asm "SETINDEXVAR";
+forall X -> tuple cons(X head, tuple tail) asm "CONS";
+forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 
 }
 
-int get_seqno() method_id {
-    slice data = get_data().begin_parse();
-    var (_, _, _, seqno) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
-    return seqno;
-}
-
-int get_execution_time() method_id {
-    slice data = get_data().begin_parse();
-    var (_, execution_time) = (data~load_uint(256), data~load_uint(32));
-    return execution_time;
-}
-
-() recv_external(slice in_msg) impure {
-    var op = in_msg~load_uint(32);
-    slice data = get_data().begin_parse();
-    if(op == 0x9df10277){
-        var (_, signature) = (in_msg~load_uint(64), in_msg~load_bits(512));
-        cell ref_cell = in_msg~load_ref();
-        var hash = cell_hash(ref_cell);
-        slice ref_s = ref_cell.begin_parse();
-        var (public_key, execution_time, receiver, seqno) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr(), data~load_uint(32));
-        var (locked_for, new_seqno) = (ref_s~load_uint(32), ref_s~load_uint(32));    
-        throw_if(119,new_seqno != (seqno + 1));
-        throw_unless(120, check_signature(hash, signature, public_key));
-        throw_if(121,locked_for <= 0);
-        throw_if(122,execution_time < now());
-        throw_if(123,(now() + locked_for) < execution_time);
-        accept_message();
-        execution_time = now() + locked_for;
-        seqno += 1;
-        set_data(begin_cell().store_uint(public_key, 256).store_uint(execution_time, 32).store_slice(receiver).store_uint(seqno, 32).end_cell());
+(int , int , int , tuple) solve(int n , int m, tuple maze) method_id {
+    
+    int s1 = 0;
+    int s2 = 0;
+    int e1 = 0;
+    int e2 = 0;
+    tuple SOLVE = empty_tuple();
+    int it1 = 0;
+    repeat(n){
+        tuple SOLVE_AUX = empty_tuple();
+        int it2 = 0;
+        repeat(m){
+            if(maze.at(it1).at(it2) == 83){
+                SOLVE_AUX~tpush(0);
+                s1 = it1;
+                s2 = it2;
+            }
+            else {
+                SOLVE_AUX~tpush(1000000000000000);
+            }
+            if(maze.at(it1).at(it2) == 69){
+                e1 = it1;
+                e2 = it2;
+            }
+            it2 += 1;
+        }
+        SOLVE~tpush(SOLVE_AUX);
+        it1 += 1;
     }
-    else {
-        var (_, execution_time, receiver) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr());
-        throw_if(124, execution_time > now());
-        accept_message();
-        send_raw_message(begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).end_cell(), 128);
+    tuple cola = null();
+    cola = cons(s1 * 100 + s2 , cola);
+    while(~ cola.null?()){
+        (int top , cola) = uncons(cola);
+        int a = top % 10000 / 100;
+        int b = top % 100;
+        int it1 = -1;
+        repeat(3){
+            int it2 = -1;
+            repeat(3){
+                if(it1 | it2){
+                    int x = a + it1;
+                    int y = b + it2;
+                    if((0 <= x) & (x < n) & (0 <= y) & (y < m)){
+                        int peso = 1;
+                        if(maze.at(x).at(y) == 88){
+                            peso = 1000001;
+                        }
+                        if(maze.at(x).at(y) == 63){
+                            peso = 1001;
+                        }
+                        if(SOLVE.at(x).at(y) > SOLVE.at(a).at(b) + peso){
+                            SOLVE = SOLVE.set_index_var(SOLVE.at(x).set_index_var(SOLVE.at(a).at(b) + peso,y) ,x);
+                            int val = SOLVE.at(x).at(y) * 10000 + x * 100 + y;
+                            tuple cola_aux = null();
+                            int band = 1;
+                            while((band == 1) & (~ cola.null?())){
+                                (int last , cola) = uncons(cola);
+                                if(last < val){
+                                    cola_aux = cons(last , cola_aux);
+                                }
+                                else {
+                                    cola = cons(last , cola);
+                                    band = 0;
+                                }
+                            }
+                            cola = cons(val , cola);
+                            while(~ cola_aux.null?()){
+                                (int last , cola_aux) = uncons(cola_aux);
+                                cola = cons(last , cola);
+                            }
+                        }
+                    }
+                }
+                it2 += 1;
+            }
+            it1 += 1;
+        }
     }
-}
+    int a = e1;
+    int b = e2;
+    while((a != s1) | (b != s2)){
+        maze = maze.set_index_var(maze.at(a).set_index_var(33,b),a); 
+        int x = a;
+        int y = b;
+        int peso = SOLVE.at(a).at(b);
+        if((a > 0)){
+            if(b < m - 1){
+                if(SOLVE.at(a - 1).at(b + 1) < peso){
+                    peso = SOLVE.at(a - 1).at(b + 1);
+                    x = a - 1;
+                    y = b + 1;
+                }
+            }
+            if(b > 0){
+                if(SOLVE.at(a - 1).at(b - 1) < peso){
+                    peso = SOLVE.at(a - 1).at(b - 1);
+                    x = a - 1;
+                    y = b - 1;
+                }
+            }
+            if(SOLVE.at(a - 1).at(b) < peso){
+                peso = SOLVE.at(a - 1).at(b);
+                x = a - 1;
+                y = b;
+            }
+        }
+        if((b > 0)){
+            if(SOLVE.at(a).at(b - 1) < peso){
+                peso = SOLVE.at(a).at(b - 1);
+                x = a;
+                y = b - 1;
+            }
+        }
+        if((b < m - 1)){
+            if(SOLVE.at(a).at(b + 1) < peso){
+                peso = SOLVE.at(a).at(b + 1);
+                x = a;
+                y = b + 1;
+            }
+        }
+        if((a < n - 1)){
+            if(b < m - 1){
+                if(SOLVE.at(a + 1).at(b + 1) < peso){
+                    peso = SOLVE.at(a + 1).at(b + 1);
+                    x = a + 1;
+                    y = b + 1;
+                }
+            }
+            if(b > 0){
+                if(SOLVE.at(a + 1).at(b - 1) < peso){
+                    peso = SOLVE.at(a + 1).at(b - 1);
+                    x = a + 1;
+                    y = b - 1;
+                }
+            }
+            if(SOLVE.at(a + 1).at(b) < peso){
+                peso = SOLVE.at(a + 1).at(b);
+                x = a + 1;
+                y = b;
+            }
+        }
+        a = x;
+        b = y;
+    }
+    maze = maze.set_index_var(maze.at(e1).set_index_var(69,e2) ,e1);
+
+    return (SOLVE.at(e1).at(e2) / 1000000 , (SOLVE.at(e1).at(e2) % 1000000) / 1000 , SOLVE.at(e1).at(e2) % 1000 , maze);
+}  
