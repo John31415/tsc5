@@ -106,7 +106,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
     int a = e1;
     int b = e2;
-    while((a == s1) | (b == s2)){
+    while((a != s1) | (b != s2)){
         tuple t_aux = empty_tuple();
         t_aux = maze.at(a); 
         t_aux = t_aux.set_index_var(33,b);
