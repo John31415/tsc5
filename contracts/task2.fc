@@ -1,5 +1,61 @@
 #include "imports/stdlib.fc";
 
-() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
+(int, int) parse_std_addr(slice s) asm "REWRITESTDADDR";
+;; (slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
+;; (slice, slice, int) dict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTMIN" "NULLSWAPIFNOT2";
+;; (slice, slice, int) dict_get_next?(cell dict, int key_len, slice pivot) asm(pivot dict key_len -> 1 0 2) "DICTGETNEXT" "NULLSWAPIFNOT2";
+;; (cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
+;; (cell, int) ~dict_delete(cell dict, int key_len, slice index) asm(index dict key_len) "DICTDEL";
 
+(cell) get_users() method_id {
+    slice data = get_data().begin_parse();
+    var admin_address = data~load_msg_addr();
+    cell users = new_dict();
+    ifnot(data.slice_empty?()){
+        users = data~load_dict();
+    }
+    return users;
+}
+
+(int) get_user_share(slice user_address) method_id {
+    var (flag, address) = parse_std_addr(user_address);
+    (slice s, int val) = get_users().udict_get?(256, address);
+    return s~load_uint(32);
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    if(in_msg_body.slice_empty?()){
+        return ();
+    }
+    slice data = get_data().begin_parse();
+    var admin_address = data~load_msg_addr();
+    cell users = new_dict();
+    ifnot(data.slice_empty?()){
+        users = data~load_dict();
+    }
+    int op = in_msg_body~load_uint(32);
+    slice cs = in_msg_full.begin_parse();
+    int flag = cs~load_uint(4);
+    slice sender_address = cs~load_msg_addr();
+    var query_id = in_msg_body~load_uint(64);
+    if(op == 0x368ddef3){
+        var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
+        throw_unless(120, are_slices_equal_2?(admin_address, address));
+
+    }
+    elseif(op == 0x278205c8){
+        var address = in_msg_body~load_msg_addr();
+        throw_unless(120, are_slices_equal_2?(admin_address, address));
+
+    }
+    elseif(op == 0x68530b3){
+        throw_if(122, users.dict_empty?());
+
+    }
+    elseif(op == 0x7362d09c){
+        var coins = in_msg_body~load_coins();
+        throw_if(122, users.dict_empty?());
+
+    }
 }
