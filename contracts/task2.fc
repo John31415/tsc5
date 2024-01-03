@@ -2,11 +2,11 @@
 
 int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 (int, int) parse_std_addr(slice s) asm "REWRITESTDADDR";
-(slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
-;; (slice, slice, int) dict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTMIN" "NULLSWAPIFNOT2";
-;; (slice, slice, int) dict_get_next?(cell dict, int key_len, slice pivot) asm(pivot dict key_len -> 1 0 2) "DICTGETNEXT" "NULLSWAPIFNOT2";
-(cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
-(cell, int) ~dict_delete?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTDEL";
+(slice, int) udict_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUGET" "NULLSWAPIFNOT";
+(int, slice, int) udict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTUMIN" "NULLSWAPIFNOT2";
+(int, slice, int) udict_get_next?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETNEXT" "NULLSWAPIFNOT2";
+(cell, ()) ~udict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUSET";
+(cell, int) udict_delete?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDEL";
 
 (cell) get_users() method_id {
     slice data = get_data().begin_parse();
@@ -42,32 +42,46 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     if(op == 0x368ddef3){
         var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
-        ;; var (address, share) = (_, _);
-        ;; users~udict_set(256, 1, in_msg_body);
-
-        ;; users~dict_delete(256, address);
-        ;; users~dict_set(256, address, share);
-        
-        var (val, flag) = dict_get?(users, 256, address);
+        int (red_address, data_address) = parse_std_addr(address);
+        var (val, flag) = udict_get?(users, 256, data_address);
         if(flag){
-            users~dict_delete?(256, address);
+            users~udict_delete?(256, data_address);
         }
         slice share_s = begin_cell().store_uint(share, 32).end_cell().begin_parse();
-        users~dict_set(256, address, share_s);
+        users~udict_set(256, data_address, share_s);
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
     elseif(op == 0x278205c8){
         var address = in_msg_body~load_msg_addr();
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
-        var (val, flag) = dict_get?(users, 256, address);
+        int (red_address, data_address) = parse_std_addr(address);
+        var (val, flag) = udict_get?(users, 256, data_address);
         ifnot(flag){
             throw(121);
         }
-        users~dict_delete?(256, address);
+        users~udict_delete?(256, data_address);
     }
     elseif(op == 0x68530b3){
         throw_if(122, users.dict_empty?());
-
+        var (address, share_s, flag) = d.udict_get_min?(256);
+        int total_share = 0;
+        while(flag){
+            int share = share_s~load_uint(32);
+            total_share += share;
+            (address, share_s, flag) = d.udict_get_next?(256, address);
+        }
+        (address, share_s, flag) = d.udict_get_min?(256);
+        while(flag){
+            int share = share_s~load_uint(32);
+            slice real_address = begin_cell().store_uint(0b10000000000 + address, 32).end_cell().begin_parse();
+            cell msg = begin_cell().store_uint(0x18, 6)
+                            .store_slice(real_address)
+                            .store_coins(share * msg_value / total_share)
+                            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                        .end_cell();
+            send_raw_message(msg, 1);
+            (address, share_s, flag) = d.udict_get_next?(256, address);
+        }
     }
     elseif(op == 0x7362d09c){
         var coins = in_msg_body~load_coins();
