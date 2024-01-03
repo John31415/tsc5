@@ -52,7 +52,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         if(flag){
             users~dict_delete(256, address);
         }
-        slice share_s = begin_cell().store_uint(share, 32).begin_parse();
+        slice share_s = begin_cell().store_uint(share, 32).end_cell().begin_parse();
         users~dict_set(256, address, share);
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
