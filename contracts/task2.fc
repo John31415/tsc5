@@ -42,7 +42,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     if(op == 0x368ddef3){
         var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
-        int (red_address, data_address) = parse_std_addr(address);
+        int (red_address, data_address) = address.parse_std_addr();
         var (val, flag) = udict_get?(users, 256, data_address);
         if(flag){
             users~udict_delete?(256, data_address);
