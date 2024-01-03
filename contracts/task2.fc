@@ -63,7 +63,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     }
     elseif(op == 0x68530b3){
         throw_if(122, users.dict_empty?());
-        var (address, share_s, flag) = users.udict_get_min?(256);
+        (int address, slice share_s, int flag) = users.udict_get_min?(256);
         int total_share = 0;
         while(flag){
             int share = share_s~load_uint(32);
