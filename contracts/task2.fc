@@ -5,7 +5,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 ;; (slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
 ;; (slice, slice, int) dict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTMIN" "NULLSWAPIFNOT2";
 ;; (slice, slice, int) dict_get_next?(cell dict, int key_len, slice pivot) asm(pivot dict key_len -> 1 0 2) "DICTGETNEXT" "NULLSWAPIFNOT2";
-;; (cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
+(cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
 ;; (cell, int) ~dict_delete(cell dict, int key_len, slice index) asm(index dict key_len) "DICTDEL";
 
 (cell) get_users() method_id {
@@ -41,12 +41,13 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     var query_id = in_msg_body~load_uint(64);
     if(op == 0x368ddef3){
         var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
-        throw_unless(120, are_slices_equal_2?(admin_address, address));
-
+        throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
+        ;; users~dict_set(256, address, share);
+        set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
     elseif(op == 0x278205c8){
         var address = in_msg_body~load_msg_addr();
-        throw_unless(120, are_slices_equal_2?(admin_address, address));
+        throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
 
     }
     elseif(op == 0x68530b3){
