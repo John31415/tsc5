@@ -50,7 +50,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         
         var (val, flag) = dict_get?(users, 256, address);
         if(flag){
-            users~dict_delete(256, address);
+            users~dict_delete?(256, address);
         }
         slice share_s = begin_cell().store_uint(share, 32).end_cell().begin_parse();
         users~dict_set(256, address, share_s);
@@ -63,7 +63,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         ifnot(flag){
             throw(121);
         }
-        users~dict_delete(256, address);
+        users~dict_delete?(256, address);
     }
     elseif(op == 0x68530b3){
         throw_if(122, users.dict_empty?());
