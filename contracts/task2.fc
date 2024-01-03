@@ -73,7 +73,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         (address, share_s, flag) = users.udict_get_min?(256);
         while(flag){
             int share = share_s~load_uint(32);
-            int real_address_int = 0b10000000000 + address;
+            int real_address_int = int(0b10000000000) + address;
             slice real_address = begin_cell().store_uint(real_address_int, 32).end_cell().begin_parse();
             cell msg = begin_cell().store_uint(0x18, 6)
                             .store_slice(real_address)
