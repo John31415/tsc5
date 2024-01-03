@@ -2,7 +2,7 @@
 
 int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 (int, int) parse_std_addr(slice s) asm "REWRITESTDADDR";
-;; (slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
+(slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
 ;; (slice, slice, int) dict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTMIN" "NULLSWAPIFNOT2";
 ;; (slice, slice, int) dict_get_next?(cell dict, int key_len, slice pivot) asm(pivot dict key_len -> 1 0 2) "DICTGETNEXT" "NULLSWAPIFNOT2";
 (cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
