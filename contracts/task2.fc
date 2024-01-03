@@ -2,7 +2,7 @@
 
 int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 (int, int) parse_std_addr(slice s) asm "REWRITESTDADDR";
-(slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
+;; (slice, int) dict_get?(cell dict, int key_len, slice index) asm(index dict key_len) "DICTGET" "NULLSWAPIFNOT";
 ;; (slice, slice, int) dict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTMIN" "NULLSWAPIFNOT2";
 ;; (slice, slice, int) dict_get_next?(cell dict, int key_len, slice pivot) asm(pivot dict key_len -> 1 0 2) "DICTGETNEXT" "NULLSWAPIFNOT2";
 (cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
@@ -52,6 +52,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         if(flag){
             users~dict_delete(256, address);
         }
+        slice share_s = begin_cell().store_uint(share, 32).begin_parse();
         users~dict_set(256, address, share);
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
@@ -66,7 +67,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     }
     elseif(op == 0x68530b3){
         throw_if(122, users.dict_empty?());
-        
+
     }
     elseif(op == 0x7362d09c){
         var coins = in_msg_body~load_coins();
