@@ -18,11 +18,11 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     return users;
 }
 
-(int) get_user_share(slice user_address) method_id {
-    var (flag, address) = parse_std_addr(user_address);
-    (slice s, int val) = get_users().udict_get?(256, address);
-    return s~load_uint(32);
-}
+;; (int) get_user_share(slice user_address) method_id {
+;;     var (flag, address) = parse_std_addr(user_address);
+;;     (slice s, int val) = get_users().udict_get?(256, address);
+;;     return s~load_uint(32);
+;; }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
     if(in_msg_body.slice_bits() < 32){
