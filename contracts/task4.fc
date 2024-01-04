@@ -3,6 +3,7 @@
 forall X -> tuple set_index_var(tuple t, X value, int position) asm "SETINDEXVAR";
 forall X -> tuple cons(X head, tuple tail) asm "CONS";
 forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
+int inc(int x) asm "INC";
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 
@@ -32,10 +33,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 e1 = it1;
                 e2 = it2;
             }
-            it2 += 1;
+            it2~inc();
         }
         SOLVE~tpush(SOLVE_AUX);
-        it1 += 1;
+        it1~inc();
     }
     tuple cola = null();
     cola = cons(s1 * 100 + s2 , cola);
@@ -55,7 +56,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         if(maze.at(x).at(y) == 88){
                             peso = 1000001;
                         }
-                        if(maze.at(x).at(y) == 63){
+                        elseif(maze.at(x).at(y) == 63){
                             peso = 1001;
                         }
                         if(SOLVE.at(x).at(y) > SOLVE.at(a).at(b) + peso){
@@ -81,9 +82,9 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         }
                     }
                 }
-                it2 += 1;
+                it2~inc();
             }
-            it1 += 1;
+            it1~inc();
         }
     }
     int a = e1;
