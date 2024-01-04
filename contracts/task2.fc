@@ -7,8 +7,6 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 (int, slice, int) udict_get_next?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETNEXT" "NULLSWAPIFNOT2";
 (cell, ()) ~udict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUSET";
 (cell, int) udict_delete?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDEL";
-(cell, int) udict_replace?(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUREPLACE";
-
 ;;vien
 (cell) get_users() method_id {
     slice data = get_data().begin_parse();
@@ -44,21 +42,18 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
         var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
         (_, int data_address) = address.parse_std_addr();
-        (users, int flag) = users.udict_replace?(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
-        ifnot(flag){
-            users~udict_set(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
-        }
+        users~udict_delete?(256, data_address);
+        users~udict_set(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
     elseif(op == 0x278205c8){ ;; Remove User
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
         var address = in_msg_body~load_msg_addr();
         (_, int data_address) = parse_std_addr(address);
-        var (val, flag) = udict_get?(users, 256, data_address);
+        (users, int flag) = udict_delete?(users, 256, data_address);
         ifnot(flag){;;vien
             throw(121);
         }
-        users~udict_delete?(256, data_address);
     };;vien
     elseif(op == 0x68530b3){ ;; Split (TON)
         throw_if(122, users.dict_empty?());
