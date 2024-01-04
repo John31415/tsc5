@@ -7,7 +7,6 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 (int, slice, int) udict_get_next?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETNEXT" "NULLSWAPIFNOT2";
 (cell, ()) ~udict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUSET";
 (cell, int) udict_delete?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDEL";
-;;vien
 (cell) get_users() method_id {
     slice data = get_data().begin_parse();
     var admin_address = data~load_msg_addr();
@@ -17,7 +16,6 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     }
     return users;
 }
-;;vien
 (int) get_user_share(slice user_address) method_id {
     var (flag, address) = parse_std_addr(user_address);
     (slice s, int val) = get_users().udict_get?(256, address);
@@ -38,7 +36,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     slice cs = in_msg_full.begin_parse();
     (_, slice sender_address) = (cs~load_uint(4), cs~load_msg_addr());
     var query_id = in_msg_body~load_uint(64);
-    if(op == 0x368ddef3){ ;; Add User
+    if(op == 0x368ddef3){
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
         (slice address, int share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
         (_, int data_address) = address.parse_std_addr();
@@ -46,18 +44,17 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         users~udict_set(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
-    elseif(op == 0x278205c8){ ;; Remove User
+    elseif(op == 0x278205c8){
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
         slice address = in_msg_body~load_msg_addr();
         (_, int data_address) = address.parse_std_addr();
-        (slice val, int flag) = users.udict_get?(256, data_address);
+        (users, int flag) = users.udict_delete?(256, data_address);
         ifnot(flag){
             throw(121);
         }
-        users~udict_delete?(256, data_address);
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
-    };;vien
-    elseif(op == 0x68530b3){ ;; Split (TON)
+    }
+    elseif(op == 0x68530b3){
         throw_if(122, users.dict_empty?());
         (int user_address, slice val, int flag) = users.udict_get_min?(256);
         int total_share = 0;
@@ -80,7 +77,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
             (user_address, val, flag) = users.udict_get_next?(256, user_address);
         } 
     }
-    elseif(op == 0x7362d09c){ ;; Transfer Notification (Jetton)
+    elseif(op == 0x7362d09c){
         throw_if(122, users.dict_empty?());
         var coins = in_msg_body~load_coins();
         (int user_address, slice val, int flag) = users.udict_get_min?(256);
