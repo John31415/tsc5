@@ -12,9 +12,9 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     slice data = get_data().begin_parse();
     var admin_address = data~load_msg_addr();
     cell users = new_dict();
-    ;; ifnot(data.slice_empty?()){
+    ifnot(data.slice_empty?()){
         users = data~load_dict();
-    ;; }
+    }
     return users;
 }
 
@@ -31,15 +31,15 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     slice data = get_data().begin_parse();
     var admin_address = data~load_msg_addr();
     cell users = new_dict();
-    ;; ifnot(data.slice_empty?()){
+    ifnot(data.slice_empty?()){
         users = data~load_dict();
-    ;; }
+    }
     int op = in_msg_body~load_uint(32);
     slice cs = in_msg_full.begin_parse();
     (int flag, slice sender_address) = (cs~load_uint(4), cs~load_msg_addr());
     var query_id = in_msg_body~load_uint(64);
     if(op == 0x368ddef3){ ;; Add User
-        throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
+        ;; throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
         var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
         (_, int data_address) = address.parse_std_addr();
         users~udict_delete?(256, data_address);
@@ -47,7 +47,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
     elseif(op == 0x278205c8){ ;; Remove User
-        throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
+        ;; throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
         var address = in_msg_body~load_msg_addr();
         (_, int data_address) = parse_std_addr(address);
         var (val, flag) = udict_get?(users, 256, data_address);
