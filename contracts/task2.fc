@@ -94,7 +94,6 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
             int user_share = val~load_uint(32);
             cell msg = begin_cell()
                             .store_uint(0x18, 6)
-                            .store_uint((1 << 10), 11)
                             .store_uint(sender_address, 256)
                             .store_coins(20000000)
                             .store_uint(1, 107)
