@@ -114,6 +114,6 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         ;;                 .end_cell();
         ;;     send_raw_message(msg, 0);
         ;;     (user_address, val, flag) = users.udict_get_next?(256, user_address);
-        } 
+        ;; } 
     }
 }
