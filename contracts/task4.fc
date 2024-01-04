@@ -33,10 +33,10 @@ int inc(int x) asm "INC";
                 e1 = it1;
                 e2 = it2;
             }
-            it2~inc();
+            it2 = inc(it2);
         }
         SOLVE~tpush(SOLVE_AUX);
-        it1~inc();
+        it1 = inc(it2);
     }
     tuple cola = null();
     cola = cons(s1 * 100 + s2 , cola);
@@ -82,9 +82,9 @@ int inc(int x) asm "INC";
                         }
                     }
                 }
-                it2~inc();
+                it2 = inc(it2);
             }
-            it1~inc();
+            it1 = inc(it1);
         }
     }
     int a = e1;
