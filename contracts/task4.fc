@@ -154,5 +154,5 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     }
     maze = maze.set_index_var(maze.at(e1).set_index_var(69,e2) ,e1);
 
-    return (SOLVE.at(e1).at(e2) >> 20 , (SOLVE.at(e1).at(e2) >> 10) & 1024 , SOLVE.at(e1).at(e2) & 1024 , maze);
+    return (SOLVE.at(e1).at(e2) >> 20 , (SOLVE.at(e1).at(e2) >> 10) & 1023 , SOLVE.at(e1).at(e2) & 1023, maze);
 }  
