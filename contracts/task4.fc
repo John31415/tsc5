@@ -26,7 +26,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 s2 = it2;
             }
             else {
-                SOLVE_AUX~tpush(1000000000000000);
+                SOLVE_AUX~tpush(1 << 42);
             }
             if(maze.at(it1).at(it2) == 69){
                 e1 = it1;
@@ -38,11 +38,11 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         it1 += 1;
     }
     tuple cola = null();
-    cola = cons(s1 * 100 + s2 , cola);
+    cola = cons((s1 << 5) + s2 , cola);
     while(~ cola.null?()){
         (int top , cola) = uncons(cola);
-        int a = top % 10000 / 100;
-        int b = top % 100;
+        int a = (top >> 5) & 31;
+        int b = top & 31;
         int it1 = -1;
         repeat(3){
             int it2 = -1;
@@ -53,14 +53,14 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     if((0 <= x) & (x < n) & (0 <= y) & (y < m)){
                         int peso = 1;
                         if(maze.at(x).at(y) == 88){
-                            peso = 1000001;
+                            peso = (1 << 20) + 1;
                         }
                         elseif(maze.at(x).at(y) == 63){
-                            peso = 1001;
+                            peso = (1 << 10) + 1;
                         }
                         if(SOLVE.at(x).at(y) > SOLVE.at(a).at(b) + peso){
                             SOLVE = SOLVE.set_index_var(SOLVE.at(x).set_index_var(SOLVE.at(a).at(b) + peso,y) ,x);
-                            int val = SOLVE.at(x).at(y) * 10000 + x * 100 + y;
+                            int val = (SOLVE.at(x).at(y) << 10) + (x << 5) + y;
                             tuple cola_aux = null();
                             int band = 1;
                             while((band == 1) & (~ cola.null?())){
@@ -154,5 +154,5 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     }
     maze = maze.set_index_var(maze.at(e1).set_index_var(69,e2) ,e1);
 
-    return (SOLVE.at(e1).at(e2) / 1000000 , (SOLVE.at(e1).at(e2) % 1000000) / 1000 , SOLVE.at(e1).at(e2) % 1000 , maze);
+    return (SOLVE.at(e1).at(e2) >> 20 , (SOLVE.at(e1).at(e2) >> 10) & 1024 , SOLVE.at(e1).at(e2) & 1024 , maze);
 }  
