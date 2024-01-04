@@ -40,11 +40,10 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     var query_id = in_msg_body~load_uint(64);
     if(op == 0x368ddef3){ ;; Add User
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
-        ;; var (address, share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
-        ;; (_, int data_address) = address.parse_std_addr();
-        ;; users~udict_delete?(256, data_address);
-        ;; users~udict_set(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
-        ;; set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
+        (slice address, int share) = (in_msg_body~load_msg_addr(), in_msg_body~load_uint(32));
+        (_, int data_address) = address.parse_std_addr();
+        users~udict_delete?(256, data_address);
+        users~udict_set(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
     }
     elseif(op == 0x278205c8){ ;; Remove User
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
