@@ -44,6 +44,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         (_, int data_address) = address.parse_std_addr();
         users~udict_delete?(256, data_address);
         users~udict_set(256, data_address, begin_cell().store_uint(share, 32).end_cell().begin_parse());
+        set_data(begin_cell().store_slice(admin_address).store_dict(users).end_cell());
     }
     elseif(op == 0x278205c8){ ;; Remove User
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
