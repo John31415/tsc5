@@ -48,12 +48,13 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     }
     elseif(op == 0x278205c8){ ;; Remove User
         throw_unless(120, are_slices_equal_2?(admin_address, sender_address));
-        ;; var address = in_msg_body~load_msg_addr();
-        ;; (_, int data_address) = parse_std_addr(address);
-        ;; (users, int flag) = udict_delete?(users, 256, data_address);
-        ;; ifnot(flag){;;vien
-        ;;     throw(121);
-        ;; }
+        slice address = in_msg_body~load_msg_addr();
+        (_, int data_address) = address.parse_std_addr();
+        (slice val, int flag) = users.udict_get?(256, data_address);
+        ifnot(flag){
+            throw(121);
+        }
+        ;; users~udict_delete?(256, data_address);
     };;vien
     elseif(op == 0x68530b3){ ;; Split (TON)
         throw_if(122, users.dict_empty?());
