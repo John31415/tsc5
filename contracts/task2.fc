@@ -63,32 +63,26 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     }
     elseif(op == 0x68530b3){
         throw_if(122, users.dict_empty?());
-        ;; int address = 0;
-        ;; slice share_s = begin_cell().end_cell().begin_parse();
-        ;; int flag = 0;
-        ;; (address, share_s, flag) = users.udict_get_min?(256);
-        ;; int total_share = 0;
-        ;; while(flag){
-        ;;     int share = share_s~load_uint(32);
-        ;;     total_share += share;
-        ;;     (address, share_s, flag) = users.udict_get_next?(256, address);
-        ;; }
-        ;; (address, share_s, flag) = users.udict_get_min?(256);
-        ;; while(flag){
-        ;;     int share = share_s~load_uint(32);
-        ;;     slice real_address = begin_cell()
-        ;;                             .store_uint(0b10000000000, 11)
-        ;;                             .store_uint(address, 256)
-        ;;                             .end_cell()
-        ;;                         .begin_parse();
-        ;;     cell msg = begin_cell().store_uint(0x18, 6)
-        ;;                     .store_slice(real_address)
-        ;;                     .store_coins(share * msg_value / total_share)
-        ;;                     .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        ;;                 .end_cell();
-        ;;     send_raw_message(msg, 1);
-        ;;     (address, share_s, flag) = users.udict_get_next?(256, address);
-        ;; }
+        (int user_address, slice val, int flag) = users.udict_get_min?(256);
+        int total_share = 0;
+        while(flag){
+            int user_share = val~load_uint(32);
+            total_share += user_share;
+            (user_address, val, flag) = users.udict_get_next?(256, user_address);
+        } 
+        (user_address, val, flag) = users.udict_get_min?(256);
+        while(flag){
+            int user_share = val~load_uint(32);
+            cell msg = begin_cell()
+                        .store_uint(0x18, 6)
+                        .store_uint(0b10000000000, 11)
+                        .store_uint(user_address, 256)
+                        .store_coins(msg_value)
+                        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+                    .end_cell();
+            send_raw_message(msg,1);
+            (user_address, val, flag) = users.udict_get_next?(256, user_address);
+        } 
     }
     elseif(op == 0x7362d09c){
         var coins = in_msg_body~load_coins();
