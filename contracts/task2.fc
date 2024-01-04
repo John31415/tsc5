@@ -73,14 +73,10 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
         (user_address, val, flag) = users.udict_get_min?(256);
         while(flag){
             int user_share = val~load_uint(32);
-            slice the_address = begin_cell()
-                                    .store_uint(0b10000000000, 11)
-                                    .store_uint(user_address, 256)
-                                    .end_cell()
-                                .begin_parse();
             cell msg = begin_cell()
                         .store_uint(0x18, 6)
-                        .store_slice(the_address)
+                        .store_uint((1 << 10), 11)
+                        .store_uint(user_address, 256)
                         .store_coins(user_share * msg_value / total_share)
                         .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
                     .end_cell();
