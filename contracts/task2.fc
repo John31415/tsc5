@@ -7,18 +7,16 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 (int, slice, int) udict_get_next?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETNEXT" "NULLSWAPIFNOT2";
 (cell, ()) ~udict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUSET";
 (cell, int) udict_delete?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDEL";
+
 (cell) get_users() method_id {
     slice data = get_data().begin_parse();
     var admin_address = data~load_msg_addr();
-    cell users = new_dict();
-    ifnot(data.slice_empty?()){
-        users = data~load_dict();
-    }
+    cell users = data~load_dict();
     return users;
 }
 (int) get_user_share(slice user_address) method_id {
-    var (flag, address) = parse_std_addr(user_address);
-    (slice s, int val) = get_users().udict_get?(256, address);
+    var (_, address) = parse_std_addr(user_address);
+    (slice s, _) = get_users().udict_get?(256, address);
     return s~load_uint(32);
 }
 
@@ -28,10 +26,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     }
     slice data = get_data().begin_parse();
     var admin_address = data~load_msg_addr();
-    cell users = new_dict();
-    ifnot(data.slice_empty?()){
-        users = data~load_dict();
-    }
+    cell users = data~load_dict();
     int op = in_msg_body~load_uint(32);
     slice cs = in_msg_full.begin_parse();
     (_, slice sender_address) = (cs~load_uint(4), cs~load_msg_addr());
