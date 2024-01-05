@@ -37,10 +37,10 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         SOLVE~tpush(SOLVE_AUX);
         it1 += 1;
     }
-    tuple cola = null();
-    cola = cons((s1 << 5) + s2 , cola);
-    while(~ cola.null?()){
-        (int top , cola) = uncons(cola);
+    cell cola = new_dict();
+    int top = (s1 << 5) + s2;
+    int flag = -1;
+    while(flag){
         int a = (top >> 5) & 31;
         int b = top & 31;
         int it1 = -1;
@@ -61,23 +61,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                         if(SOLVE.at(x).at(y) > SOLVE.at(a).at(b) + peso){
                             SOLVE = SOLVE.set_index_var(SOLVE.at(x).set_index_var(SOLVE.at(a).at(b) + peso,y) ,x);
                             int val = (SOLVE.at(x).at(y) << 10) + (x << 5) + y;
-                            tuple cola_aux = null();
-                            int band = 1;
-                            while((band == 1) & (~ cola.null?())){
-                                (int last , cola) = uncons(cola);
-                                if(last < val){
-                                    cola_aux = cons(last , cola_aux);
-                                }
-                                else {
-                                    cola = cons(last , cola);
-                                    band = 0;
-                                }
-                            }
-                            cola = cons(val , cola);
-                            while(~ cola_aux.null?()){
-                                (int last , cola_aux) = uncons(cola_aux);
-                                cola = cons(last , cola);
-                            }
+                            cola~udict_set(43, val, begin_cell().end_cell().begin_parse());
                         }
                     }
                 }
@@ -85,6 +69,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             }
             it1 += 1;
         }
+        (cola, top, _, flag) = udict_delete_get_min(cola, 43);
     }
     int a = e1;
     int b = e2;
