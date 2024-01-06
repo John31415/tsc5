@@ -22,12 +22,13 @@
         set_data(wrap_storage(1, storage));
         return ();
     }
-    var new_code = in_msg_body~load_maybe_ref(); 
+    var new_code = in_msg_body~load_maybe_ref();
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
-    if(version() != expected_version){
-        throw_if(200, new_code.null?());
+    if(version() == expected_version){
+        return ();
     }
+    throw_if(200, new_code.null?());
     var new_code_s = new_code.begin_parse();
 }
 
