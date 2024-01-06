@@ -16,21 +16,19 @@
 
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     var expected_version = in_msg_body~load_uint(32); 
-    var new_code = in_msg_body~load_maybe_ref(); 
-    var migrations = in_msg_body~load_dict(); 
-    cell payload = in_msg_body~load_ref();
     ifnot(expected_version){
         cell storage = get_storage();
-        storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
+        storage = process_message(storage, msg_value, balance, in_msg_full, begin_cell().end_cell().begin_parse());
         set_data(wrap_storage(1, storage));
         return ();
     }
-
-
-    ;; if(version() != expected_version){
-    ;;     throw_if(200, new_code.null?());
-    ;; }
-    ;; var new_code_s = new_code.begin_parse();
+    var new_code = in_msg_body~load_maybe_ref(); 
+    var migrations = in_msg_body~load_dict(); 
+    cell payload = in_msg_body~load_ref();
+    if(version() != expected_version){
+        throw_if(200, new_code.null?());
+    }
+    var new_code_s = new_code.begin_parse();
 }
 
 cell get_storage() {
