@@ -49,7 +49,7 @@ cell wrap_storage(int version_id, cell storage) {
 
 int version() method_id {
     slice cs = get_data().begin_parse();
-    cell version_id = cs~load_uint(32);
+    int version_id = cs~load_uint(32);
     return version_id;
 }
 
