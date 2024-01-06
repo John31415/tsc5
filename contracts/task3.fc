@@ -1,5 +1,7 @@
 #include "imports/stdlib.fc";
 
+forall X -> int is_null (X x) asm "ISNULL";
+
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     var expected_version = in_msg_body~load_uint(32); 
     ifnot(expected_version){
@@ -18,35 +20,28 @@
     int flag = -1;
     int band = -1;
     (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
+    tuple t = null();
     while(flag & band){
         node_version = node_version_s~load_uint(32);
+        var migration_code = node_version_s~load_maybe_ref();
+        if(~ migration_code.null?()){
+            t = cons(migration_code, t);
+        }
         if(node_version == expected_version){
             band = 0;
         }
         (node_version_s, flag) = migrations.udict_get?(32, node_version);
     }
     throw_if(400, band);
-    node_version = version(); 
-    flag = -1;
-    band = -1;
     cell storage = get_storage();
-    (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
-    while(flag & band){
-        node_version = node_version_s~load_uint(32);
-        var migration_code = node_version_s~load_maybe_ref();
-        if(~ migration_code.null?()){
-            set_c3(migration_code.begin_parse().bless());
-            storage = migrate_one(storage);
-        }
-        if(node_version == expected_version){
-            band = 0;
-        }
-        (node_version_s, flag) = migrations.udict_get?(32, node_version);
+    while(~ t.is_null()){
+        (var migration_code, t) = uncons(t);
+        set_c3(migration_code.begin_parse().bless());
+        storage = migrate_one(storage);
     }
     set_c3(new_code.begin_parse().bless());
     set_code(new_code);
-    storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(wrap_storage(node_version, storage));
+    set_data(wrap_storage(node_version, process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse())));
 }
 
 cell get_storage() {
