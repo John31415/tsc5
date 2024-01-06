@@ -29,18 +29,20 @@
         set_data(wrap_storage(expected_version, storage));
         return ();
     }
+    throw_if(200, new_code.null?());
     var node_version = version();
     int flag = -1;
     int band = -1;
     while(flag & band){
         (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
-        node_version = node_version_s~load_uint(32);
-        if(node_version == expected_version){
-            band = 0;
+        if(flag){
+            node_version = node_version_s~load_uint(32);
+            if(node_version == expected_version){
+                band = 0;
+            }
         }
     }
     throw_if(400, band);
-    throw_if(200, new_code.null?());
 
     ;; int flag1 = 0;
     ;; int flag2 = 0;
