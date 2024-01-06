@@ -19,7 +19,7 @@
     var new_code = in_msg_body~load_maybe_ref(); 
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
-    int bit = new_code~load_bits(1);
+    int bit = new_code.begin_parse()~load_bits(1);
     throw_unless(200, bit);
 
     ;; ---
