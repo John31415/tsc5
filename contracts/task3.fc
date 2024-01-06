@@ -30,8 +30,20 @@
         cell storage = get_storage();
         storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
         set_data(wrap_storage(expected_version, storage));
+        return ();
     }
-    throw(400);
+    var node_version = version();
+    int flag = -1;
+    int band = 0;
+    while(flag & (~ band)){
+        (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
+        node_version = node_version_s~load_uint(32);
+        if(node_version == expected_version){
+            band = -1;
+        }
+    }
+    throw_unless(400, band);
+
     ;; int flag1 = 0;
     ;; int flag2 = 0;
     ;; (int key, slice val, int flag) = migrations.udict_get_min?(32);
