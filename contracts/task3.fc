@@ -17,8 +17,7 @@
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     var expected_version = in_msg_body~load_uint(32); 
     ifnot(expected_version){
-        cell storage = get_storage();
-        set_data(wrap_storage(1, storage));
+        set_data(wrap_storage(1, get_data()));
         return ();
     }
     var new_code = in_msg_body~load_maybe_ref();
