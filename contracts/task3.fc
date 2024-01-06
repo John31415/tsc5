@@ -63,6 +63,8 @@ int version() method_id {
         }
     }
     throw_if(400, band);
+    set_code(new_code);
+    set_c3(new_code.begin_parse().bless());
     var node_version = version(); 
     int flag = -1;
     int band = -1;
