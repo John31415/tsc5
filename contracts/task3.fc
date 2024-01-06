@@ -14,27 +14,6 @@
 ;; You may delete and rewrite as needed,
 ;; but the final implementation must adhere to the same structure
 
-
-cell get_storage() {
-    slice data = get_data().begin_parse();
-    data~load_uint(32);
-    cell storage = data~load_ref();
-    return storage;
-}
-
-cell wrap_storage(int version_id, cell storage) {
-    return begin_cell()
-                .store_uint(version_id, 32)
-                .store_ref(storage)
-            .end_cell();
-}
-
-int version() method_id {
-    slice cs = get_data().begin_parse();
-    int version_id = cs~load_uint(32);
-    return version_id;
-}
-
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     var expected_version = in_msg_body~load_uint(32); 
     ifnot(expected_version){
@@ -68,8 +47,6 @@ int version() method_id {
     int flag = -1;
     int band = -1;
     while(flag & band){
-        set_code(new_code);
-        set_c3(new_code.begin_parse().bless());
         (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
         if(flag){
             node_version = node_version_s~load_uint(32);
@@ -79,14 +56,37 @@ int version() method_id {
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
-            storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-            set_data(wrap_storage(node_version, storage));
             if(node_version == expected_version){
                 band = 0;
             }
         }
     }
+    storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
+    set_data(wrap_storage(node_version, storage));
+    set_code(new_code);
+    ;; set_c3(new_code.begin_parse().bless());
 }
+
+cell get_storage() {
+    slice data = get_data().begin_parse();
+    data~load_uint(32);
+    cell storage = data~load_ref();
+    return storage;
+}
+
+cell wrap_storage(int version_id, cell storage) {
+    return begin_cell()
+                .store_uint(version_id, 32)
+                .store_ref(storage)
+            .end_cell();
+}
+
+int version() method_id {
+    slice cs = get_data().begin_parse();
+    int version_id = cs~load_uint(32);
+    return version_id;
+}
+
 ;; <<<<< Custom version-specific code begins
 ;; This section (everything between << and >> characters) will be fully substituted for each version.
 ;; This is an IMPORTANT part, and these exact lines with <<<<< and >>>>> must be present in your code for the testing system to work correctly.
