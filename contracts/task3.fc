@@ -61,10 +61,10 @@
             }
         }
     }
-    storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    set_data(wrap_storage(node_version, storage));
     set_code(new_code);
     ;; set_c3(new_code.begin_parse().bless());
+    storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
+    set_data(wrap_storage(node_version, storage));
 }
 
 cell get_storage() {
