@@ -15,13 +15,13 @@
 ;; but the final implementation must adhere to the same structure
 
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
-    ;; var expected_version = in_msg_body~load_uint(32); 
-    ;; ifnot(expected_version){
-    ;;     cell storage = get_storage();
+    var expected_version = in_msg_body~load_uint(32); 
+    ifnot(expected_version){
+        cell storage = get_storage();
         ;; storage = process_message(storage, msg_value, balance, in_msg_full, begin_cell().end_cell().begin_parse());
-    ;;     set_data(wrap_storage(1, storage));
-    ;;     return ();
-    ;; }
+        set_data(wrap_storage(1, storage));
+        return ();
+    }
     ;; var new_code = in_msg_body~load_maybe_ref();
     ;; var migrations = in_msg_body~load_dict(); 
     ;; cell payload = in_msg_body~load_ref();
