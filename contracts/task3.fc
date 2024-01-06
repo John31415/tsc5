@@ -48,7 +48,7 @@
 cell get_storage() {
     slice data = get_data().begin_parse();
     data~load_uint(32);
-    cell storage = cs~load_ref();
+    cell storage = data~load_ref();
     return storage;
 }
 
