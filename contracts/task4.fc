@@ -1,8 +1,6 @@
 #include "imports/stdlib.fc";
 
 forall X -> tuple set_index_var(tuple t, X value, int position) asm "SETINDEXVAR";
-forall X -> tuple cons(X head, tuple tail) asm "CONS";
-forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
 
@@ -15,7 +13,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
     int e1 = 0;
     int e2 = 0;
     tuple SOLVE = empty_tuple();
-    tuple path = empty_tuple();
     int it1 = 0;
     repeat(n){
         tuple SOLVE_AUX = empty_tuple();
@@ -27,7 +24,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                 s2 = it2;
             }
             else {
-                SOLVE_AUX~tpush(1 << 42);
+                SOLVE_AUX~tpush(1 << 37);
             }
             if(maze.at(it1).at(it2) == 69){
                 e1 = it1;
@@ -36,7 +33,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             it2 += 1;
         }
         SOLVE~tpush(SOLVE_AUX);
-        path~tpush(SOLVE_AUX);
         it1 += 1;
     }
     cell cola = new_dict();
@@ -46,9 +42,6 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
         int a = (top >> 5) & 31;
         int b = top & 31;
         int it1 = -1;
-        int pos1 = -1;
-        int pos2 = -1;
-        int tam = (1 << 43);
         repeat(3){
             int it2 = -1;
             repeat(3){
@@ -58,20 +51,15 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
                     if((0 <= x) & (x < n) & (0 <= y) & (y < m)){
                         int peso = 1;
                         if(maze.at(x).at(y) == 88){
-                            peso = (1 << 20) + 1;
+                            peso = (1 << 18) + 1;
                         }
                         elseif(maze.at(x).at(y) == 63){
-                            peso = (1 << 10) + 1;
+                            peso = (1 << 9) + 1;
                         }
                         if(SOLVE.at(x).at(y) > SOLVE.at(a).at(b) + peso){
                             SOLVE = SOLVE.set_index_var(SOLVE.at(x).set_index_var(SOLVE.at(a).at(b) + peso,y) ,x);
                             int val = (SOLVE.at(x).at(y) << 10) + (x << 5) + y;
                             cola~udict_set(43, val, begin_cell().end_cell().begin_parse());
-                        }
-                        if(SOLVE.at(x).at(y) < tam){
-                            tam = SOLVE.at(x).at(y);
-                            pos1 = x;
-                            pos2 = y;
                         }
                     }
                 }
@@ -80,17 +68,74 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
             it1 += 1;
         }
         (cola, top, _, flag) = udict_delete_get_min(cola, 43);
-        path = path.set_index_var(path.at(a).set_index_var((pos1 << 5) + pos2, b) ,a);
     }
-    
-    int a = path.at(e1).at(e2) >> 5;
-    int b = path.at(e1).at(e2) & 31;
+    int a = e1;
+    int b = e2;
     while((a != s1) | (b != s2)){
-        maze = maze.set_index_var(maze.at(a).set_index_var(33, b), a);
-        int x = path.at(a).at(b); 
-        a = x >> 5;
-        b = x & 31;
+        maze = maze.set_index_var(maze.at(a).set_index_var(33,b),a); 
+        int x = a;
+        int y = b;
+        int peso = SOLVE.at(a).at(b);
+        if((a > 0)){
+            if(b < m - 1){
+                if(SOLVE.at(a - 1).at(b + 1) < peso){
+                    peso = SOLVE.at(a - 1).at(b + 1);
+                    x = a - 1;
+                    y = b + 1;
+                }
+            }
+            if(b > 0){
+                if(SOLVE.at(a - 1).at(b - 1) < peso){
+                    peso = SOLVE.at(a - 1).at(b - 1);
+                    x = a - 1;
+                    y = b - 1;
+                }
+            }
+            if(SOLVE.at(a - 1).at(b) < peso){
+                peso = SOLVE.at(a - 1).at(b);
+                x = a - 1;
+                y = b;
+            }
+        }
+        if((b > 0)){
+            if(SOLVE.at(a).at(b - 1) < peso){
+                peso = SOLVE.at(a).at(b - 1);
+                x = a;
+                y = b - 1;
+            }
+        }
+        if((b < m - 1)){
+            if(SOLVE.at(a).at(b + 1) < peso){
+                peso = SOLVE.at(a).at(b + 1);
+                x = a;
+                y = b + 1;
+            }
+        }
+        if((a < n - 1)){
+            if(b < m - 1){
+                if(SOLVE.at(a + 1).at(b + 1) < peso){
+                    peso = SOLVE.at(a + 1).at(b + 1);
+                    x = a + 1;
+                    y = b + 1;
+                }
+            }
+            if(b > 0){
+                if(SOLVE.at(a + 1).at(b - 1) < peso){
+                    peso = SOLVE.at(a + 1).at(b - 1);
+                    x = a + 1;
+                    y = b - 1;
+                }
+            }
+            if(SOLVE.at(a + 1).at(b) < peso){
+                peso = SOLVE.at(a + 1).at(b);
+                x = a + 1;
+                y = b;
+            }
+        }
+        a = x;
+        b = y;
     }
+    maze = maze.set_index_var(maze.at(e1).set_index_var(69,e2) ,e1);
 
-    return (SOLVE.at(e1).at(e2) >> 20 , (SOLVE.at(e1).at(e2) >> 10) & 1023 , SOLVE.at(e1).at(e2) & 1023, maze);
+    return (SOLVE.at(e1).at(e2) >> 18 , (SOLVE.at(e1).at(e2) >> 9) & 511 , SOLVE.at(e1).at(e2) & 511, maze);
 }  
