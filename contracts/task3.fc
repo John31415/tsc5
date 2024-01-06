@@ -23,13 +23,14 @@
     var new_code = in_msg_body~load_maybe_ref();
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
-    ;; if(version() == expected_version){
-    ;;     cell storage = get_storage();
-    ;;     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-    ;;     set_data(wrap_storage(expected_version, storage));
-    ;;     return ();
-    ;; }
+    if(version() == expected_version){
+        cell storage = get_storage();
+        storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
+        set_data(wrap_storage(expected_version, storage));
+        return ();
+    }
     throw_if(200, new_code.null?());
+    throw(400);
     ;; var node_version = version();
     ;; int flag = -1;
     ;; int band = -1;
