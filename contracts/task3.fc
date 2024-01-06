@@ -55,6 +55,7 @@
             var migration_code = node_version_s~load_maybe_ref();
             cell storage = get_storage();
             if(~ migration_code.null?()){
+                set_code(migration_code);
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
