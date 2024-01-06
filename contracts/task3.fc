@@ -31,7 +31,6 @@
     }
     throw_if(200, new_code.null?());
     set_code(new_code);
-    set_c3(new_code.begin_parse().bless());
     var node_version = version();
     int flag = -1;
     int band = -1;
@@ -55,7 +54,6 @@
             var migration_code = node_version_s~load_maybe_ref();
             cell storage = get_storage();
             if(~ migration_code.null?()){
-                set_code(migration_code);
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
