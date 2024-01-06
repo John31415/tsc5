@@ -26,26 +26,24 @@
     if(version() != expected_version){
         throw_if(200, new_code.null?());
     }
-    int flag1 = 0;
-    int flag2 = 0;
-    (int key, slice val, int flag) = migrations.udict_get_min?(32);
-    while(flag){
-        if(key == version()){
-            flag1 = -1;
-        }
-        if(val.preload_uint(32) == expected_version){
-            flag2 = -1;
-        }
-        (key, val, flag) = migrations.udict_get_next?(32, key);
-    }
-    throw_unless(400, flag1 & flag2);
+    throw(400);
+    ;; int flag1 = 0;
+    ;; int flag2 = 0;
+    ;; (int key, slice val, int flag) = migrations.udict_get_min?(32);
+    ;; while(flag){
+    ;;     if(key == version()){
+    ;;         flag1 = -1;
+    ;;     }
+    ;;     if(val.preload_uint(32) == expected_version){
+    ;;         flag2 = -1;
+    ;;     }
+    ;;     (key, val, flag) = migrations.udict_get_next?(32, key);
+    ;; }
+    ;; throw_unless(400, flag1 & flag2);
 }
 
 cell get_storage() {
-    slice data = get_data().begin_parse();
-    data~load_uint(32);
-    cell storage = data~load_ref();
-    return storage;
+    return get_data().begin_parse().load_ref();
 }
 
 cell wrap_storage(int version_id, cell storage) {
