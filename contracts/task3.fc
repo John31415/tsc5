@@ -24,7 +24,7 @@
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
     if(version() != expected_version){
-        throw_if(200, new_code.cell_null?());
+        throw_if(200, new_code.null?());
     }
     int flag1 = 0;
     int flag2 = 0;
