@@ -19,7 +19,8 @@
     var new_code = in_msg_body~load_maybe_ref(); 
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
-    throw(200);
+    int bit = new_code~load_bits(1);
+    throw_unless(200, bit);
 
     ;; ---
     ;; here you should check if it's the first call or not based on `expected_version` as stated in the task
@@ -31,7 +32,7 @@
     
     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
 
-    set_data(wrap_storage(-2, storage)); ;; -2 is just a random placeholder for the version
+    set_data(wrap_storage(-2, storage));
 }
 
 cell get_storage() {
