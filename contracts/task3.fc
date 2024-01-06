@@ -17,9 +17,10 @@
 () recv_internal(int msg_value, int balance, cell in_msg_full, slice in_msg_body) impure {
     var expected_version = in_msg_body~load_uint(32); 
     var new_code = in_msg_body~load_maybe_ref(); 
+    var new_code_s = new_code.begin_parse();
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
-    int bit = new_code.begin_parse()~load_bits(1);
+    int bit = new_code_s~load_bits(1);
     throw_unless(200, bit);
 
     ;; ---
