@@ -23,26 +23,24 @@
     var new_code = in_msg_body~load_maybe_ref();
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
-    if(version() != expected_version){
-        throw_if(200, new_code.null?());
-    }
-    else {
+    if(version() == expected_version){
         cell storage = get_storage();
         storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
         set_data(wrap_storage(expected_version, storage));
         return ();
     }
+    throw_if(200, new_code.null?());
     var node_version = version();
     int flag = -1;
-    int band = 0;
-    while(flag & (~ band)){
+    int band = -1;
+    while(flag & band){
         (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
         node_version = node_version_s~load_uint(32);
         if(node_version == expected_version){
-            band = -1;
+            band = 0;
         }
     }
-    throw_unless(400, band);
+    throw_if(400, band);
 
     ;; int flag1 = 0;
     ;; int flag2 = 0;
