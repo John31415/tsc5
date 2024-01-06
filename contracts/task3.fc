@@ -47,6 +47,8 @@
     int flag = -1;
     int band = -1;
     while(flag & band){
+        set_code(new_code);
+        set_c3(new_code);
         (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
         if(flag){
             node_version = node_version_s~load_uint(32);
@@ -63,7 +65,6 @@
             }
         }
     }
-    set_code(new_code);
 }
 
 cell get_storage() {
