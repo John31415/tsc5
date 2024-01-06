@@ -1,7 +1,7 @@
 #include "imports/stdlib.fc";
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
-
+ 
 }
 
 int get_seqno() method_id {
@@ -11,16 +11,14 @@ int get_seqno() method_id {
 }
 
 int get_execution_time() method_id {
-    slice data = get_data().begin_parse();
-    var (_, execution_time) = (data~load_uint(256), data~load_uint(32));
-    return execution_time;
+    return get_data().begin_parse().skip_bits(256).preload_uint(32);
 }
 
 () recv_external(slice in_msg) impure {
     var op = in_msg~load_uint(32);
     slice data = get_data().begin_parse();
     if(op == 0x9df10277){
-        var (_, signature) = (in_msg~load_uint(64), in_msg~load_bits(512));
+        var signature = in_msg.skip_bits(64).preload_bits(512);
         cell ref_cell = in_msg~load_ref();
         cell hash_c = ref_cell; 
         slice ref_s = ref_cell.begin_parse();
@@ -32,14 +30,12 @@ int get_execution_time() method_id {
         throw_if(122,execution_time < now());
         throw_if(123,(now() + locked_for) < execution_time);
         accept_message();
-        execution_time = now() + locked_for;
-        seqno += 1;
-        set_data(begin_cell().store_uint(public_key, 256).store_uint(execution_time, 32).store_slice(receiver).store_uint(seqno, 32).end_cell());
+        set_data(begin_cell().store_uint(public_key, 256).store_uint(now() + locked_for, 32).store_slice(receiver).store_uint(seqno + 1, 32).end_cell());
     }
     else {
         var (_, execution_time, receiver) = (data~load_uint(256), data~load_uint(32), data~load_msg_addr());
         throw_if(124, execution_time > now());
         accept_message();
-        send_raw_message(begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1).end_cell(), 128);
+        send_raw_message(begin_cell().store_uint(0x18, 6).store_slice(receiver).store_coins(0).store_uint(0, 107).end_cell(), 128);
     }
 }
