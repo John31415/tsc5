@@ -30,7 +30,6 @@
         return ();
     }
     throw_if(200, new_code.null?());
-    set_code(new_code);
     var node_version = version();
     int flag = -1;
     int band = -1;
@@ -64,6 +63,7 @@
             }
         }
     }
+    set_code(new_code);
 }
 
 cell get_storage() {
