@@ -6,45 +6,41 @@
         set_data(wrap_storage(1, get_data()));
         return ();
     }
-    var new_code = in_msg_body~load_maybe_ref();
-    var migrations = in_msg_body~load_dict(); 
-    cell payload = in_msg_body~load_ref();
     if(version() == expected_version){
-        cell storage = get_storage();
-        storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
-        set_data(wrap_storage(expected_version, storage));
+        set_data(wrap_storage(expected_version, process_message(get_storage(), msg_value, balance, in_msg_full, in_msg_body.preload_ref().begin_parse())));
         return ();
     }
+    var new_code = in_msg_body~load_maybe_ref();
     throw_if(200, new_code.null?());
+    var migrations = in_msg_body~load_dict(); 
+    cell payload = in_msg_body~load_ref();
+
     var node_version = version();
     int flag = -1;
     int band = -1;
+    (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
     while(flag & band){
-        (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
-        if(flag){
-            node_version = node_version_s~load_uint(32);
-            if(node_version == expected_version){
-                band = 0;
-            }
+        node_version = node_version_s~load_uint(32);
+        if(node_version == expected_version){
+            band = 0;
         }
+        (node_version_s, flag) = migrations.udict_get?(32, node_version);
     }
     throw_if(400, band);
     node_version = version(); 
     flag = -1;
     band = -1;
     cell storage = get_storage();
+    (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
     while(flag & band){
-        (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
-        if(flag){
-            node_version = node_version_s~load_uint(32);
-            var migration_code = node_version_s~load_maybe_ref();
-            if(~ migration_code.null?()){
-                set_c3(migration_code.begin_parse().bless());
-                storage = migrate_one(storage);
-            }
-            if(node_version == expected_version){
-                band = 0;
-            }
+        node_version = node_version_s~load_uint(32);
+        var migration_code = node_version_s~load_maybe_ref();
+        if(~ migration_code.null?()){
+            set_c3(migration_code.begin_parse().bless());
+            storage = migrate_one(storage);
+        }
+        if(node_version == expected_version){
+            band = 0;
         }
     }
     set_c3(new_code.begin_parse().bless());
@@ -54,10 +50,7 @@
 }
 
 cell get_storage() {
-    slice data = get_data().begin_parse();
-    data~load_uint(32);
-    cell storage = data~load_ref();
-    return storage;
+    return get_data().begin_parse().preload_ref();
 }
 
 cell wrap_storage(int version_id, cell storage) {
