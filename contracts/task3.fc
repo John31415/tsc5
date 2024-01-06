@@ -43,7 +43,10 @@
 }
 
 cell get_storage() {
-    return get_data().begin_parse().load_ref();
+    slice data = get_data().begin_parse();
+    data~load_uint(32);
+    cell storage = data~load_ref();
+    return storage;
 }
 
 cell wrap_storage(int version_id, cell storage) {
