@@ -24,6 +24,7 @@
     var migrations = in_msg_body~load_dict(); 
     cell payload = in_msg_body~load_ref();
     if(version() == expected_version){
+        set_code(new_code);
         cell storage = get_storage();
         storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
         set_data(wrap_storage(expected_version, storage));
@@ -43,6 +44,7 @@
         }
     }
     throw_if(400, band);
+    set_code(new_code);
     var node_version = version(); 
     int flag = -1;
     int band = -1;
