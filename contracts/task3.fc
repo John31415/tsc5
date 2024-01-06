@@ -46,12 +46,12 @@
     var node_version = version(); 
     int flag = -1;
     int band = -1;
+    cell storage = get_storage();
     while(flag & band){
         (slice node_version_s, flag) = migrations.udict_get?(32, node_version);
         if(flag){
             node_version = node_version_s~load_uint(32);
             var migration_code = node_version_s~load_maybe_ref();
-            cell storage = get_storage();
             if(~ migration_code.null?()){
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
