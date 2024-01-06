@@ -53,7 +53,6 @@
             node_version = node_version_s~load_uint(32);
             var migration_code = node_version_s~load_maybe_ref();
             if(~ migration_code.null?()){
-                set_code(migration_code);
                 set_c3(migration_code.begin_parse().bless());
                 storage = migrate_one(storage);
             }
@@ -62,8 +61,8 @@
             }
         }
     }
+    set_c3(new_code.begin_parse().bless());
     set_code(new_code);
-    ;; set_c3(new_code.begin_parse().bless());
     storage = process_message(storage, msg_value, balance, in_msg_full, payload.begin_parse());
     set_data(wrap_storage(node_version, storage));
 }
